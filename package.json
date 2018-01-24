@@ -1,0 +1,33 @@
+{
+  "name": "slide-v",
+  "version": "0.0.0",
+  "description": "",
+  "main": "./src/slide-v.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stadnikEV/slide-v.git"
+  },
+  "keywords": [
+    "сarousel"
+  ],
+  "author": "Stadnik Eugene",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/stadnikEV/slide-v/issues"
+  },
+  "homepage": "https://github.com/stadnikEV/slide-v#readme",
+  "devDependencies": {
+    "@babel/core": "^7.0.0-beta.38",
+    "@babel/preset-env": "^7.0.0-beta.38",
+    "babel-loader": "^8.0.0-beta.0",
+    "eslint": "^4.16.0",
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-loader": "^1.9.0",
+    "eslint-plugin-import": "^2.8.0",
+    "uglifyjs-webpack-plugin": "^1.1.6",
+    "webpack": "^3.10.0"
+  }
+}
