@@ -1,6 +1,6 @@
 
 export default class slideV {
-  constructor() {
-    console.log('slide-v.js');
+  constructor () {
+    this.a = 5;
   }
 }

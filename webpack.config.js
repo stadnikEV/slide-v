@@ -1,38 +1,24 @@
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+// const path = require('path');
 
 module.exports = {
   entry: './src/slide-v.js',
 
   output: {
-    filename: './bundle/slide-v.js',
+    filename: './bundle/slide-v.js'
   },
 
   module: {
     rules: [
-      {
-        enforce: "pre",
-        test: /\.js$/,
-        exclude: /node_modules|bower_components/,
-        loader: "eslint-loader",
-        options: {
-          // several examples !
-
-          // default value
-          formatter: require("eslint/lib/formatters/stylish"),
-
-          // community formatter
-          //formatter: require("eslint-friendly-formatter"),
-
-          // custom formatter
-          //formatter: function(results) {
-            // `results` format is available here
-            // http://eslint.org/docs/developer-guide/nodejs-api.html#executeonfiles()
-
-            // you should return a string
-            // DO NOT USE console.*() directly !
-            // return "OUTPUT"
-        }
-      },
+      // {
+      //   enforce: 'pre',
+      //   test: /\.js$/,
+      //   exclude: /(node_modules|bower_components)/,
+      //   loader: 'eslint-loader',
+      //   options: {
+      //    eslintPath: path.join(__dirname, '/node_modules/eslint-config-airbnb-standard/node_modules/eslint')
+      //   }
+      // },
       {
         test: /\.js$/,
         exclude: /(node_modules|bower_components)/,
@@ -49,5 +35,5 @@ module.exports = {
   plugins: [
     new UglifyJsPlugin()
   ]
-  
+
 };
