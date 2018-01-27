@@ -1,6 +1,6 @@
 
 export default class slideV {
-  constructor () {
+  constructor() {
     this.a = 5;
   }
 }
