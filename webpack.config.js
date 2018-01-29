@@ -4,7 +4,7 @@ module.exports = {
   entry: './src/slide-v.js',
 
   output: {
-    filename: './bundle/slide-v.js'
+    filename: './bundle/slide-v.js',
   },
 
   module: {
@@ -21,15 +21,15 @@ module.exports = {
         use: {
           loader: 'babel-loader',
           options: {
-            presets: ['@babel/preset-env']
-          }
-        }
-      }
-    ]
+            presets: ['@babel/preset-env'],
+          },
+        },
+      },
+    ],
   },
 
   plugins: [
-    new UglifyJsPlugin()
-  ]
+    new UglifyJsPlugin(),
+  ],
 
 };
