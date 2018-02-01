@@ -1,0 +1,21 @@
+html, body {
+  width: 100%;
+}
+
+.my-carousel {
+  border: solid 1px gray;
+  width: 50%;
+  margin: 0 auto;
+}
+
+.my-carousel > * {
+  color: gray;
+  padding: 100px 0;
+  background-color: lightgray;
+  text-align: center;
+  font-size: 2rem;
+}
+
+.my-carousel > *:nth-child(2n+1) {
+  background-color: darkgray;
+}
