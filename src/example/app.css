@@ -8,14 +8,12 @@ html, body {
   margin: 0 auto;
 }
 
-.my-carousel > * {
+.slide {
   color: gray;
   padding: 100px 0;
   background-color: lightgray;
   text-align: center;
   font-size: 2rem;
-}
-
-.my-carousel > *:nth-child(2n+1) {
-  background-color: darkgray;
+  border: solid 1px gray;
+  box-sizing: border-box;
 }

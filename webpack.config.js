@@ -33,7 +33,6 @@ module.exports = {
       },
     ],
   },
-  plugins: [],
 };
 
 
@@ -58,8 +57,8 @@ if (NODE_ENV === 'dev') {
 }
 
 if (NODE_ENV === 'prod') {
+  module.exports.entry = './src/slide-v.js';
   module.exports.plugins = [
     new UglifyJsPlugin(),
   ];
-  module.exports.entry = './src/slide-v.js';
 }
