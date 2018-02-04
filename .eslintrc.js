@@ -8,6 +8,7 @@ module.exports = {
         "sourceType": "module"
     },
     "rules": {
+        "max-len": ["error", { "code": 140 }],
         "linebreak-style": [
             "error",
             "unix"
