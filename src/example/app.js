@@ -5,9 +5,9 @@ require('./app.css');
 
 const mySlideV = new SlideV({
   containerSelector: '.my-carousel',
-  transitionDuration: 1500,
+  transitionDuration: 8000,
   transitionTiming: 'linear',
-  startIndex: 0,
+  startIndex: 1,
   elementsInFrame: 1,
   step: 1,
   onInit: ({ curentIndex, numberElemAfterFrame }) => {
@@ -26,16 +26,21 @@ const elem2 = document.createElement('div');
 elem2.innerHTML = 'new slide 2';
 elem2.classList.add('slide');
 
+const prev = document.querySelector('.prev');
+const next = document.querySelector('.next');
 
-mySlideV.remove(5);
-// mySlideV.insert(elem1, -1);
-mySlideV.insert(elem2, 0);
-mySlideV.goTo(1);
+prev.addEventListener('click', () => mySlideV.prev());
+next.addEventListener('click', () => mySlideV.next());
+// mySlideV.remove(5);
+// mySlideV.insert(elem2, 0);
+// mySlideV.goTo(1);
 mySlideV.next();
+// mySlideV.prev();
+// mySlideV.next();
 mySlideV.destory();
 
-setTimeout(() => {
-  mySlideV.init();
-  // mySlideV.next();
-  mySlideV.adjust(1);
-}, 4000);
+// setTimeout(() => {
+//   mySlideV.init();
+//   // mySlideV.next();
+//   mySlideV.adjust(1);
+// }, 5000);

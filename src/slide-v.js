@@ -66,6 +66,8 @@ export default class SlideV {
       this.position = 0;
       this.createDomStructure();
 
+      this.eventSubscribe();
+
       if (this.config.startIndex !== 0) {
         this.adjustPosition(this.config.startIndex);
         this.firstRun = true; //  not run onChange during initialization
@@ -87,17 +89,15 @@ export default class SlideV {
     this.mainContainer.style.position = 'relative';
 
     this.movingContainer = document.createElement('div');
-    this.movingContainer.style.whiteSpace = 'nowrap';
-    this.movingContainer.style.boxSizing = 'border-box';
     this.movingContainer.style.position = 'relative';
-    this.movingContainer.style.left = '0';
+    this.setCssSlideMovingContainerProperty();
     this.movingContainer.style.transition = `left ${this.config.transitionTiming} ${this.config.transitionDuration}ms`;
 
     const elemInContainer = this.mainContainer.children.length;
 
     for (let i = 0; i < elemInContainer; i += 1) {
       const slide = this.mainContainer.firstElementChild;
-      this.setCssProperty(slide);
+      this.setCssSlideProperty(slide);
       this.movingContainer.appendChild(slide);
     }
     this.mainContainer.prepend(this.movingContainer);
@@ -119,6 +119,8 @@ export default class SlideV {
     if (initialMarkup) {
       this.destoryDomStructure();
     }
+
+    this.eventUnsubscribe();
 
     this.onChange('destory');
   }
@@ -209,10 +211,13 @@ export default class SlideV {
 
   makeStep(step, eventName) {
     this.inProgress = true;
+    this.lastStartPositionLeft = parseFloat(getComputedStyle(this.movingContainer).left); // necesary for onResize
     this.position += step;
     this.numberSlidesAfterFrame += -step;
-    const slideWidth = this.movingContainer.firstElementChild.offsetWidth;
-    this.movingContainer.style.left = `${-this.position * slideWidth}px`;
+    const slideWidth = parseFloat(getComputedStyle(this.movingContainer.firstElementChild).width);
+    const endPositionLeft = -this.position * slideWidth;
+    this.movingContainer.style.left = `${endPositionLeft}px`;
+    this.lastSlideWidth = slideWidth; // necesary for onResize
 
     const onTransitionend = () => {
       this.inProgress = false;
@@ -266,7 +271,7 @@ export default class SlideV {
   insertPrepend(elem) {
     const newElement = elem;
     this.numberSlidesAfterFrame += 1;
-    this.setCssProperty(newElement);
+    this.setCssSlideProperty(newElement);
     this.movingContainer.prepend(newElement);
     if (this.config.onChange) {
       this.onChange('prepend');
@@ -287,7 +292,7 @@ export default class SlideV {
   insertAppend(elem) {
     const newElement = elem;
     this.numberSlidesAfterFrame += 1;
-    this.setCssProperty(newElement);
+    this.setCssSlideProperty(newElement);
     this.movingContainer.append(newElement);
     if (this.config.onChange) {
       this.onChange('append');
@@ -318,7 +323,7 @@ export default class SlideV {
     }
 
     this.numberSlidesAfterFrame += 1;
-    this.setCssProperty(newElement);
+    this.setCssSlideProperty(newElement);
     this.movingContainer.children[index].before(newElement);
 
     if (this.config.onChange) {
@@ -337,6 +342,7 @@ export default class SlideV {
     if (!this.inProgress) this.buferDequeue()();
   }
 
+
   removeElem(index) {
     if (index < 0
       || index > this.movingContainer.children.length - 1) {
@@ -349,7 +355,7 @@ export default class SlideV {
 
     this.numberSlidesAfterFrame -= 1;
     const elem = this.movingContainer.removeChild(this.movingContainer.children[index]);
-    SlideV.removeCssProperty(elem);
+    SlideV.removeCssSlideProperty(elem);
 
     if (this.config.onChange) {
       this.onChange('remove');
@@ -376,18 +382,28 @@ export default class SlideV {
   }
 
 
-  setCssProperty(elem) {
+  setCssSlideProperty(elem) {
     const slide = elem;
     slide.style.width = `${100 / this.config.elementsInFrame}%`;
     slide.style.display = 'inline-block';
     return slide;
   }
 
-  static removeCssProperty(elem) {
+
+  static removeCssSlideProperty(elem) {
     const slide = elem;
     slide.style.width = '';
     slide.style.display = '';
     return slide;
+  }
+
+
+  setCssSlideMovingContainerProperty() {
+    this.movingContainer.style.whiteSpace = 'nowrap';
+    this.movingContainer.style.boxSizing = 'border-box';
+    this.movingContainer.style.fontSize = '0';
+    this.movingContainer.style.left = '0';
+    return this.movingContainer;
   }
 
 
@@ -421,5 +437,48 @@ export default class SlideV {
       curentIndex: this.position,
       numberElemAfterFrame: this.numberSlidesAfterFrame,
     });
+  }
+
+
+  eventSubscribe() {
+    window.addEventListener('resize', this.onResize.bind(this)); // problem with bind
+  }
+
+
+  eventUnsubscribe() {
+    window.removeEventListener('resize', this.onResize.bind(this)); // problem with bind
+  }
+
+  onResize() {
+    if (this.inProgress) {
+      const slideWidth = parseFloat(getComputedStyle(this.movingContainer.firstElementChild).width);
+      const endPositionLeft = (-this.position * slideWidth);
+      const slideWidthCoefficient = slideWidth / this.lastSlideWidth;
+      const startPositionLeft = this.lastStartPositionLeft * slideWidthCoefficient;
+      const curentPositionLeft = parseFloat(getComputedStyle(this.movingContainer).left);
+
+      const timeCoefficient = (curentPositionLeft - endPositionLeft) / (startPositionLeft - endPositionLeft);
+
+      this.lastStartPositionLeft = startPositionLeft;
+      this.lastSlideWidth = slideWidth;
+
+      this.movingContainer.style.transitionDuration = `${this.config.transitionDuration * timeCoefficient}ms`;
+      this.movingContainer.style.left = `${endPositionLeft}px`;
+
+      const onTransitionend = () => {
+        this.movingContainer.style.transitionDuration = `${this.config.transitionDuration}ms`;
+        this.movingContainer.removeEventListener('transitionend', onTransitionend);
+      };
+
+      this.movingContainer.addEventListener('transitionend', onTransitionend);
+
+      return;
+    }
+    this.movingContainer.style.transitionDuration = '';
+    const slideWidth = parseFloat(getComputedStyle(this.movingContainer.firstElementChild).width);
+    this.movingContainer.style.left = `${-this.position * slideWidth}px`;
+    setTimeout(() => {
+      this.movingContainer.style.transitionDuration = `${this.config.transitionDuration}ms`;
+    }, 0);
   }
 }
