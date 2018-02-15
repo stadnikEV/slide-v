@@ -8,7 +8,7 @@ const NODE_ENV = process.env.NODE_ENV || 'prod';
 module.exports = {
   output: {
     path: path.resolve(__dirname, 'bundle'),
-    filename: 'slide-v.js',
+    filename: 'slide-v.min.js',
     library: 'SlideV',
     libraryTarget: 'umd',
   },

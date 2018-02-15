@@ -17,3 +17,7 @@ html, body {
   border: solid 1px gray;
   box-sizing: border-box;
 }
+
+.movingContainer {
+  transition-timing-function: linear;
+}

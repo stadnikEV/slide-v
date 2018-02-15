@@ -8,7 +8,7 @@ module.exports = {
         "sourceType": "module"
     },
     "rules": {
-        "max-len": ["error", { "code": 140 }],
+        "max-len": ["error", { "code": 160 }],
         "linebreak-style": [
             "error",
             "unix"
@@ -21,6 +21,22 @@ module.exports = {
             "error",
             "always"
         ],
-        "no-console": ["warn", { "allow": ["warn", "error"] }]
+        "no-console": [
+          "warn",
+          {
+            "allow": ["warn", "error", "log"]
+          }
+        ],
+        "no-param-reassign": [
+          "error",
+          {
+            "props": false
+          }
+        ],
+        "no-underscore-dangle": [
+          "error", {
+            "allowAfterThis": true
+          }
+        ]
     }
-};
+}
