@@ -1,5 +1,5 @@
 
-import Loop from './loop';
+// import Loop from './loop';
 import SlideV from '../slide-v';
 
 require('./app.css');
@@ -10,7 +10,7 @@ const next = document.querySelector('.next');
 
 const mySlideV = new SlideV({
   containerSelector: '.my-carousel',
-  slidesInFrame: 2,
+  slidesInFrame: 3,
   // step: 2,
   transitionDuration: 500,
   slideElemClass: 'slide',
@@ -24,14 +24,14 @@ const mySlideV = new SlideV({
   },
 });
 
-const myLoop = new Loop({
-  slideV: mySlideV,
-  step: 2,
-});
+// const myLoop = new Loop({
+//   slideV: mySlideV,
+//   step: 2,
+// });
 
 next.addEventListener('click', () => {
-  myLoop.next();
+  mySlideV.next();
 });
 prev.addEventListener('click', () => {
-  myLoop.prev();
+  mySlideV.prev();
 });

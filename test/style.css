@@ -1,0 +1,23 @@
+html, body {
+  width: 100%;
+}
+
+.carousel {
+  border: solid 1px gray;
+  width: 50%;
+  margin: 0 auto;
+}
+
+.slide {
+  color: gray;
+  padding: 100px 0;
+  background-color: lightgray;
+  text-align: center;
+  font-size: 2rem;
+  border: solid 1px gray;
+  box-sizing: border-box;
+}
+
+.movingContainer {
+  transition-timing-function: linear;
+}

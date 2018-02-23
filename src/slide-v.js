@@ -8,7 +8,7 @@ export default class SlideV {
     this._config = setDefaultPropertyOfConfig(config);
     this._containerElem = document.querySelector(this._config.containerSelector);
     this._callback = () => {};
-    this._onTransitionend = this._onTransitionend.bind(this);
+    this._onTransitionEnd = this._onTransitionEnd.bind(this);
     this._onClick = this._onClick.bind(this);
     this._onResize = this._onResize.bind(this);
     this._init();
@@ -55,7 +55,7 @@ export default class SlideV {
 
 
   _makeStep({ step, isAnimated = true, callback }) {
-    if (typeof callback === 'function') { // сохраняем колбек в переменную для выхова его в обработчике события
+    if (typeof callback === 'function') { // сохраняем колбек в переменную для вызова в обработчике события
       this._callback = callback;
     }
 
@@ -68,7 +68,7 @@ export default class SlideV {
       : availableStep * Math.sign(step);
 
     if (curentStep === 0) {
-      this._onTransitionend({ isOnSlideChange: false }); // думаю можно вызвать обработчик, событие тут не нужно
+      this._onTransitionEnd({ isOnSlideChange: false }); // думаю можно вызвать обработчик, событие тут не нужно
       return curentStep;
     }
 
@@ -82,7 +82,7 @@ export default class SlideV {
     if (!isAnimated) {
       this._movingElem.style.transitionDuration = ''; // проблема с Duration = 1ms. Заметно дерганье
       setTimeout(() => {
-        this._onTransitionend({ isOnSlideChange: false });
+        this._onTransitionEnd({ isOnSlideChange: false });
       }, 0);
     }
 
@@ -274,9 +274,11 @@ export default class SlideV {
   }
 
 
-  _onTransitionend({ isOnSlideChange = true } = {}) {
+  _onTransitionEnd({ isOnSlideChange = true } = {}) {
     this._inProgress = false;
     this._movingElem.style.transitionDuration = `${this._config.transitionDuration}ms`;
+
+    if (isOnSlideChange) this._onChange();
 
     if (typeof this._callback === 'function') {
       this._callbackBuffer = [];
@@ -285,8 +287,6 @@ export default class SlideV {
       this._callbackBuffer = null;
       this._callback = null;
     }
-
-    if (isOnSlideChange) this._onChange();
 
     if (this._buffer.length > 0) {
       const method = this._buffer.shift();
@@ -321,21 +321,21 @@ export default class SlideV {
     const slideWidth = parseFloat(getComputedStyle(this._movingElem.firstElementChild).width);
     this._movingElem.style.left = `${-this._position * slideWidth}px`;
     setTimeout(() => {
-      this._onTransitionend({ isOnSlideChange: false });
+      this._onTransitionEnd({ isOnSlideChange: false });
     }, 0);
   }
 
 
   _eventSubscribe() {
     window.addEventListener('resize', this._onResize);
-    this._movingElem.addEventListener('transitionend', this._onTransitionend);
+    this._movingElem.addEventListener('transitionend', this._onTransitionEnd);
     this._movingElem.addEventListener('click', this._onClick);
   }
 
 
   _eventUnsubscribe() {
     window.removeEventListener('resize', this._onResize);
-    this._movingElem.removeEventListener('transitionend', this._onTransitionend);
+    this._movingElem.removeEventListener('transitionend', this._onTransitionEnd);
     this._movingElem.removeEventListener('click', this._onClick);
   }
 
@@ -358,7 +358,7 @@ export default class SlideV {
     return {
       curentSlideIndex: this._position,
       numberSlidesAfterFrame: this._numberSlidesAfterFrame,
-      lastSlideIndex: this._position + this._config.slidesInFrame + this._numberSlidesAfterFrame,
+      lastSlideIndex: this._position + this._config.slidesInFrame + this._numberSlidesAfterFrame + (-1),
     };
   }
 

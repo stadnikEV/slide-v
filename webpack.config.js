@@ -62,3 +62,23 @@ if (NODE_ENV === 'prod') {
     new UglifyJsPlugin(),
   ];
 }
+
+if (NODE_ENV === 'test') {
+  module.exports.entry = './test/test.js';
+  module.exports.watch = true;
+  module.exports.devtool = 'inline-cheap-module-source-map';
+  module.exports.devServer = {
+    inline: true,
+    port: 8080,
+    contentBase: 'bundle/',
+  };
+  module.exports.plugins = [
+    new HtmlWebpackPlugin({
+      template: './test/index.html',
+    }),
+  ];
+  module.exports.module.rules.push({
+    test: /\.css$/,
+    loaders: ['style-loader', 'css-loader'],
+  });
+}

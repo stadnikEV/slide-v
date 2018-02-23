@@ -8,7 +8,7 @@ module.exports = {
         "sourceType": "module"
     },
     "rules": {
-        "max-len": ["error", { "code": 160 }],
+        "max-len": ["error", { "code": 220 }],
         "linebreak-style": [
             "error",
             "unix"
@@ -35,7 +35,8 @@ module.exports = {
         ],
         "no-underscore-dangle": [
           "error", {
-            "allowAfterThis": true
+            "allowAfterThis": true,
+            "allow": ["_makeStep"]
           }
         ]
     }
