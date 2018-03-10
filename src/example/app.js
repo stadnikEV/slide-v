@@ -1,5 +1,3 @@
-
-// import Loop from './loop';
 import SlideV from '../slide-v';
 
 require('./app.css');
@@ -10,24 +8,18 @@ const next = document.querySelector('.next');
 
 const mySlideV = new SlideV({
   containerSelector: '.my-carousel',
-  slidesInFrame: 3,
-  // step: 2,
+  slidesInFrame: 1,
+  step: 1,
   transitionDuration: 500,
   slideElemClass: 'slide',
   movingElemClass: 'movingContainer',
-  onInit: () => { console.warn('Init'); },
-  onChange: (curentIndex, numberElemAfterFrame) => {
-    console.log(`curentIndex: ${curentIndex},  numberElemAfterFrame: ${numberElemAfterFrame}`);
+  onMoveEnd: () => {
+    console.log(mySlideV.getState());
   },
-  onClick(elem) {
-    console.log(elem);
+  onSlideClick(slideElem) {
+    console.log(slideElem);
   },
 });
-
-// const myLoop = new Loop({
-//   slideV: mySlideV,
-//   step: 2,
-// });
 
 next.addEventListener('click', () => {
   mySlideV.next();

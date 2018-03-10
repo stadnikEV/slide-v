@@ -21,7 +21,6 @@ export default class SlideV {
     this._numberSlidesAfterFrame = this._containerElem.children.length - this._config.slidesInFrame;
     this._createDomStructure();
     this._eventSubscribe();
-    this._config.onInit();
   }
 
 
@@ -32,8 +31,6 @@ export default class SlideV {
     this._movingElem = document.createElement('div');
     this._movingElem.style.position = 'relative';
     this._movingElem.style.whiteSpace = 'nowrap';
-    this._movingElem.style.boxSizing = 'border-box';
-    this._movingElem.style.fontSize = '0';
     this._movingElem.style.left = '0';
     this._movingElem.style.transitionProperty = 'left';
     this._movingElem.style.transitionDuration = `${this._config.transitionDuration}ms`;
@@ -78,12 +75,11 @@ export default class SlideV {
     const slideWidth = parseFloat(getComputedStyle(this._movingElem.firstElementChild).width);
     const endPositionLeft = -this._position * slideWidth;
     this._movingElem.style.left = `${endPositionLeft}px`;
+    this._movingElem.style.transitionDuration = `${this._config.transitionDuration}ms`;
 
     if (!isAnimated) {
       this._movingElem.style.transitionDuration = ''; // проблема с Duration = 1ms. Заметно дерганье
-      setTimeout(() => {
-        this._onTransitionEnd({ isOnSlideChange: false });
-      }, 0);
+      this._onTransitionEnd({ isOnSlideChange: false });
     }
 
     this._lastSlideWidth = slideWidth; // необходимо для onResize
@@ -91,6 +87,27 @@ export default class SlideV {
 
     return curentStep;
   }
+
+
+  _onTransitionEnd({ isOnSlideChange = true } = {}) {
+    this._inProgress = false;
+
+    if (isOnSlideChange) this._onMoveEnd();
+
+    if (typeof this._callback === 'function') {
+      this._callbackBuffer = [];
+      this._callback();
+      this._buffer = this._callbackBuffer.concat(this._buffer);
+      this._callbackBuffer = null;
+      this._callback = null;
+    }
+
+    if (this._buffer.length > 0) {
+      const method = this._buffer.shift();
+      method();
+    }
+  }
+
 
   _setCssSlideElem(slideElem) {
     slideElem.style.display = 'inline-block';
@@ -264,35 +281,15 @@ export default class SlideV {
   }
 
 
-  _onChange() {
-    this._config.onChange(this._position, this._numberSlidesAfterFrame);
+  _onMoveEnd() {
+    this._config.onMoveEnd();
   }
 
 
   _onClick(event) {
-    this._config.onClick(event.target.closest('.slide-v_slide'));
+    this._config.onSlideClick(event.target.closest('.slide-v_slide'));
   }
 
-
-  _onTransitionEnd({ isOnSlideChange = true } = {}) {
-    this._inProgress = false;
-    this._movingElem.style.transitionDuration = `${this._config.transitionDuration}ms`;
-
-    if (isOnSlideChange) this._onChange();
-
-    if (typeof this._callback === 'function') {
-      this._callbackBuffer = [];
-      this._callback();
-      this._buffer = this._callbackBuffer.concat(this._buffer);
-      this._callbackBuffer = null;
-      this._callback = null;
-    }
-
-    if (this._buffer.length > 0) {
-      const method = this._buffer.shift();
-      method();
-    }
-  }
 
   _onResize() {
     if (this._inProgress) { // при медленном перемещении (10с), подвигай окно браузера
@@ -358,7 +355,7 @@ export default class SlideV {
     return {
       curentSlideIndex: this._position,
       numberSlidesAfterFrame: this._numberSlidesAfterFrame,
-      lastSlideIndex: this._position + this._config.slidesInFrame + this._numberSlidesAfterFrame + (-1),
+      lastSlideIndex: (this._position + this._config.slidesInFrame + this._numberSlidesAfterFrame) - 1,
     };
   }
 
@@ -381,7 +378,7 @@ export default class SlideV {
   }
 
 
-  goTo(position = 0, { isAnimated = true, callback } = {}) {
+  goTo(position, { isAnimated = true, callback } = {}) {
     this._initApi({
       method: this._goToPosition,
       options: { position, isAnimated, callback },

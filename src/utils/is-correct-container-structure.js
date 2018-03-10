@@ -1,7 +1,7 @@
 
 export default function isCorrectContainerStructure(config) {
   if (!('containerSelector' in config)) {
-    console.warn('Side-v error: "config.containerSelector" is not defined. It is required parametr');
+    console.warn('Side-v error: "config.containerSelector" - is not defined. It is required parametr');
 
     return false;
   }
@@ -23,7 +23,7 @@ export default function isCorrectContainerStructure(config) {
   }
 
   if (containerElem.children.length === 0) {
-    console.warn('Side-v error: "containerElem" does not contain elements');
+    console.warn('Side-v error: "containerElem" - does not contain elements');
 
     return false;
   }

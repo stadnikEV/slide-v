@@ -7,7 +7,7 @@ const NODE_ENV = process.env.NODE_ENV || 'prod';
 
 module.exports = {
   output: {
-    path: path.resolve(__dirname, 'bundle'),
+    path: path.resolve(__dirname, 'dist'),
     filename: 'slide-v.min.js',
     library: 'SlideV',
     libraryTarget: 'umd',
@@ -17,7 +17,7 @@ module.exports = {
       {
         enforce: 'pre',
         test: /\.js$/,
-        exclude: /(node_modules|bower_components|bundle)/,
+        exclude: /(node_modules|bower_components|dist|test\/mocha)/,
         loader: 'eslint-loader',
       },
       {
@@ -43,7 +43,7 @@ if (NODE_ENV === 'dev') {
   module.exports.devServer = {
     inline: true,
     port: 8080,
-    contentBase: 'bundle/',
+    contentBase: 'dist/',
   };
   module.exports.plugins = [
     new HtmlWebpackPlugin({
@@ -70,7 +70,7 @@ if (NODE_ENV === 'test') {
   module.exports.devServer = {
     inline: true,
     port: 8080,
-    contentBase: 'bundle/',
+    contentBase: 'dist/',
   };
   module.exports.plugins = [
     new HtmlWebpackPlugin({
