@@ -6,7 +6,9 @@ export default class SlideV {
   constructor(config) {
     if (!isCorrectContainerStructure(config)) return;
     this._config = setDefaultPropertyOfConfig(config);
-    this._containerElem = document.querySelector(this._config.containerSelector);
+    this._containerElem = (typeof this._config.containerSelector === 'string')
+      ? document.querySelector(this._config.containerSelector)
+      : this._config.containerSelector;
     this._callback = () => {};
     this._onTransitionEnd = this._onTransitionEnd.bind(this);
     this._onClick = this._onClick.bind(this);
@@ -112,7 +114,6 @@ export default class SlideV {
   _setCssSlideElem(slideElem) {
     slideElem.style.display = 'inline-block';
     slideElem.style.width = `${100 / this._config.slidesInFrame}%`;
-    slideElem.style.verticalAlign = 'middle';
     slideElem.classList.add('slide-v_slide');
     if (this._config.slideElemClass) {
       slideElem.classList.add(this._config.slideElemClass);
@@ -122,7 +123,6 @@ export default class SlideV {
   _removeCssSlideElem(slideElem) {
     slideElem.style.display = '';
     slideElem.style.width = '';
-    slideElem.style.verticalAlign = '';
     slideElem.classList.remove('slide-v_slide');
     if (this._config.slideElemClass) {
       slideElem.classList.remove(this._config.slideElemClass);

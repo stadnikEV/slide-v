@@ -21,3 +21,9 @@ html, body {
 .movingContainer {
   transition-timing-function: linear;
 }
+
+.button-container {
+  padding-top: 20px; 
+  width: 50%;
+  margin: 0 auto;
+}

@@ -27,7 +27,6 @@ export default function () {
         chai.assert.equal(newElem.classList.contains('slide-v_slide'), true, 'missing class "slide-v_slide"');
         chai.assert.equal(newElem.style.display, 'inline-block', 'missing style display="inline-block"');
         chai.assert.equal(newElem.style.width, '100%', 'missing style width="100%"');
-        chai.assert.equal(newElem.style.verticalAlign, 'middle', 'missing style vertical-align="middle"');
         done();
       });
     };

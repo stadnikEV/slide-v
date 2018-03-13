@@ -72,7 +72,7 @@ export default function () {
     });
 
 
-    window.it('new SlideV({ containerSelector: ".correctlyContainer" }) - created DOM structure', (done) => {
+    window.it('new SlideV({ containerSelector: ".containerSelector" }) - created DOM structure', (done) => {
       containerElem.innerHTML = '<div>slide 0</div> <div>slide 1</div> <div>slide 2</div> <div>slide 3</div> <div>slide 4</div>';
       const numberElemInContainer = containerElem.children.length;
 
@@ -91,7 +91,30 @@ export default function () {
         chai.assert.equal(elem.classList.contains('slide-v_slide'), true, 'missing class "slide-v_slide"');
         chai.assert.equal(elem.style.display, 'inline-block', 'missing style display="inline-block"');
         chai.assert.equal(elem.style.width, '100%', 'missing style width="100%"');
-        chai.assert.equal(elem.style.verticalAlign, 'middle', 'missing style vertical-align="middle"');
+      }
+      done();
+    });
+
+
+    window.it('new SlideV({ containerSelector: DOM element }) - created DOM structure', (done) => {
+      containerElem.innerHTML = '<div>slide 0</div> <div>slide 1</div> <div>slide 2</div> <div>slide 3</div> <div>slide 4</div>';
+      const numberElemInContainer = containerElem.children.length;
+
+      mySlideV = new SlideV({
+        containerSelector: document.querySelector('.carousel'),
+      });
+
+      const movingElem = containerElem.firstElementChild;
+
+      chai.assert.equal(containerElem.children.length, 1, 'problem when creating the "movingElem"');
+      chai.assert.equal(movingElem.children.length, numberElemInContainer, 'number of slides does not correspond to the original');
+
+      for (let i = 0; i < movingElem.children.length; i += 1) {
+        const elem = movingElem.children[i];
+        chai.assert.equal(elem.innerHTML, `slide ${i}`, 'sequence of slides does not correspond to the original');
+        chai.assert.equal(elem.classList.contains('slide-v_slide'), true, 'missing class "slide-v_slide"');
+        chai.assert.equal(elem.style.display, 'inline-block', 'missing style display="inline-block"');
+        chai.assert.equal(elem.style.width, '100%', 'missing style width="100%"');
       }
       done();
     });

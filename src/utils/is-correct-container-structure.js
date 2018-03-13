@@ -6,13 +6,22 @@ export default function isCorrectContainerStructure(config) {
     return false;
   }
 
-  if (typeof config.containerSelector !== 'string') {
-    console.warn('Side-v error: "config.containerSelector" - uncorrect type of data. Use "String" type');
+  if (config.containerSelector === null || config.containerSelector === undefined) {
+    console.warn('Side-v error: "config.containerSelector" - uncorrect type of data. Use "String" type or DOM element');
 
     return false;
   }
 
-  const containerElem = document.querySelector(config.containerSelector);
+  if (typeof config.containerSelector !== 'string' && config.containerSelector.nodeType !== 1) {
+    console.warn('Side-v error: "config.containerSelector" - uncorrect type of data. Use "String" type or DOM element');
+
+    return false;
+  }
+
+  const containerElem = (typeof config.containerSelector === 'string')
+    ? document.querySelector(config.containerSelector)
+    : config.containerSelector;
+
 
   if (containerElem === null
     || containerElem === undefined

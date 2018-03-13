@@ -5,9 +5,10 @@ require('./app.css');
 const prev = document.querySelector('.prev');
 const next = document.querySelector('.next');
 
+const carousel = document.querySelector('.my-carousel');
 
 const mySlideV = new SlideV({
-  containerSelector: '.my-carousel',
+  containerSelector: carousel,
   slidesInFrame: 1,
   step: 1,
   transitionDuration: 500,
