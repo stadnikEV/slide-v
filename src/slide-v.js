@@ -6,9 +6,7 @@ export default class SlideV {
   constructor(config) {
     if (!isCorrectContainerStructure(config)) return;
     this._config = setDefaultPropertyOfConfig(config);
-    this._containerElem = (typeof this._config.containerSelector === 'string')
-      ? document.querySelector(this._config.containerSelector)
-      : this._config.containerSelector;
+    this._containerElem = config.containerSelector;
     this._callback = () => {};
     this._onTransitionEnd = this._onTransitionEnd.bind(this);
     this._onClick = this._onClick.bind(this);
@@ -144,9 +142,13 @@ export default class SlideV {
 
 
   _insertPrepend({ slideElem, callback }) {
-    this._numberSlidesAfterFrame += 1;
+    const lastNumberSlidesInMovingElem = this._movingElem.children.length;
     this._setCssSlideElem(slideElem);
     this._movingElem.prepend(slideElem);
+
+    if (lastNumberSlidesInMovingElem + 1 === this._movingElem.children.length) { // если случайно добавить один и тот же элемент
+      this._numberSlidesAfterFrame += 1;
+    }
 
     if (typeof callback === 'function') {
       this._callbackBuffer = [];
@@ -164,9 +166,13 @@ export default class SlideV {
 
 
   _insertAppend({ slideElem, callback }) {
-    this._numberSlidesAfterFrame += 1;
+    const lastNumberSlidesInMovingElem = this._movingElem.children.length;
     this._setCssSlideElem(slideElem);
     this._movingElem.append(slideElem);
+
+    if (lastNumberSlidesInMovingElem + 1 === this._movingElem.children.length) { // если случайно добавить один и тот же элемент
+      this._numberSlidesAfterFrame += 1;
+    }
 
     if (typeof callback === 'function') {
       this._callbackBuffer = [];
@@ -195,9 +201,13 @@ export default class SlideV {
       return false;
     }
 
-    this._numberSlidesAfterFrame += 1;
+    const lastNumberSlidesInMovingElem = this._movingElem.children.length;
     this._setCssSlideElem(slideElem);
     this._movingElem.children[index].before(slideElem);
+
+    if (lastNumberSlidesInMovingElem + 1 === this._movingElem.children.length) { // если случайно добавить один и тот же элемент
+      this._numberSlidesAfterFrame += 1;
+    }
 
     if (typeof callback === 'function') {
       this._callbackBuffer = [];

@@ -18,7 +18,6 @@ require('./mocha/mocha.css');
 
 window.mocha.setup('bdd');
 
-
 window.describe('SlideV', () => {
   initSlideVTest();
   getStateTest();

@@ -11,7 +11,6 @@ export default function () {
       mySlideV = new SlideV({
         containerSelector: '.carousel',
         slideElemClass: 'slide',
-        movingElemClass: 'movingContainer',
       });
       const newElem = document.createElement('div');
       newElem.innerHTML = 'new Slide';
@@ -26,7 +25,22 @@ export default function () {
       chai.assert.equal(newElem.style.display, 'inline-block', 'missing style display="inline-block"');
       chai.assert.equal(newElem.style.width, '100%', 'missing style width="100%"');
 
-      movingElem.removeChild(newElem);
+      done();
+    });
+
+    window.it('added the same element twice', (done) => {
+      containerElem.innerHTML = '<div>slide 0</div>';
+      mySlideV = new SlideV({
+        containerSelector: '.carousel',
+        slideElemClass: 'slide',
+      });
+      const newElem = document.createElement('div');
+      newElem.innerHTML = 'new Slide';
+
+      mySlideV.prepend(newElem);
+      mySlideV.prepend(newElem);
+
+      chai.assert.equal(mySlideV.getState().lastSlideIndex, 1, 'getState().lastSlideIndex is not equal to 1');
 
       done();
     });

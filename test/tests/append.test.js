@@ -30,5 +30,23 @@ export default function () {
 
       done();
     });
+
+
+    window.it('added the same element twice', (done) => {
+      containerElem.innerHTML = '<div>slide 0</div>';
+      mySlideV = new SlideV({
+        containerSelector: '.carousel',
+        slideElemClass: 'slide',
+      });
+      const newElem = document.createElement('div');
+      newElem.innerHTML = 'new Slide';
+
+      mySlideV.append(newElem);
+      mySlideV.append(newElem);
+
+      chai.assert.equal(mySlideV.getState().lastSlideIndex, 1, 'getState().lastSlideIndex is not equal to 1');
+
+      done();
+    });
   });
 }

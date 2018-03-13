@@ -23,9 +23,7 @@ export default function isCorrectContainerStructure(config) {
     : config.containerSelector;
 
 
-  if (containerElem === null
-    || containerElem === undefined
-    || containerElem.nodeType !== 1) {
+  if (containerElem === null) {
     console.warn('Side-v error: "containerElem" - it is not DOM Element');
 
     return false;
