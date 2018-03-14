@@ -7,7 +7,7 @@ export default class SlideV {
     if (!isCorrectContainerStructure(config)) return;
     this._config = setDefaultPropertyOfConfig(config);
     this._containerElem = config.containerSelector;
-    this._callback = () => {};
+    this._callback = () => {}; // сохраняем колбек в переменную для вызова в обработчике события
     this._onTransitionEnd = this._onTransitionEnd.bind(this);
     this._onClick = this._onClick.bind(this);
     this._onResize = this._onResize.bind(this);
@@ -66,7 +66,7 @@ export default class SlideV {
       : availableStep * Math.sign(step);
 
     if (curentStep === 0) {
-      this._onTransitionEnd({ isOnSlideChange: false }); // думаю можно вызвать обработчик, событие тут не нужно
+      this._onTransitionEnd({ isOnMoveEnd: false }); // думаю можно вызвать обработчик, событие тут не нужно
       return curentStep;
     }
 
@@ -80,7 +80,7 @@ export default class SlideV {
 
     if (!isAnimated) {
       this._movingElem.style.transitionDuration = ''; // проблема с Duration = 1ms. Заметно дерганье
-      this._onTransitionEnd({ isOnSlideChange: false });
+      this._onTransitionEnd({ isOnMoveEnd: false });
     }
 
     this._lastSlideWidth = slideWidth; // необходимо для onResize
@@ -90,10 +90,8 @@ export default class SlideV {
   }
 
 
-  _onTransitionEnd({ isOnSlideChange = true } = {}) {
-    this._inProgress = false;
-
-    if (isOnSlideChange) this._onMoveEnd();
+  _onTransitionEnd({ isOnMoveEnd = true } = {}) {
+    if (isOnMoveEnd) this._onMoveEnd();
 
     if (typeof this._callback === 'function') {
       this._callbackBuffer = [];
@@ -102,6 +100,8 @@ export default class SlideV {
       this._callbackBuffer = null;
       this._callback = null;
     }
+
+    this._inProgress = false;
 
     if (this._buffer.length > 0) {
       const method = this._buffer.shift();
@@ -330,7 +330,7 @@ export default class SlideV {
     const slideWidth = parseFloat(getComputedStyle(this._movingElem.firstElementChild).width);
     this._movingElem.style.left = `${-this._position * slideWidth}px`;
     setTimeout(() => {
-      this._onTransitionEnd({ isOnSlideChange: false });
+      this._onTransitionEnd({ isOnMoveEnd: false });
     }, 0);
   }
 
