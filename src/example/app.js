@@ -4,13 +4,14 @@ require('./app.css');
 
 const prev = document.querySelector('.prev');
 const next = document.querySelector('.next');
+const remove = document.querySelector('.remove');
 
 // const carousel = document.querySelector('.my-carousel');
 
 const mySlideV = new SlideV({
   containerSelector: '.my-carousel',
   slidesInFrame: 1,
-  step: 1,
+  step: 2,
   transitionDuration: 500,
   slideElemClass: 'slide',
   movingElemClass: 'movingContainer',
@@ -27,4 +28,11 @@ next.addEventListener('click', () => {
 });
 prev.addEventListener('click', () => {
   mySlideV.prev();
+});
+
+mySlideV.next();
+mySlideV.destroy();
+mySlideV.prev();
+remove.addEventListener('click', () => {
+  mySlideV.destroy();
 });

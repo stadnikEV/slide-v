@@ -16,6 +16,7 @@ export default class SlideV {
 
 
   _init() {
+    this._isInit = true;
     this._buffer = [];
     this._position = 0;
     this._numberSlidesAfterFrame = this._containerElem.children.length - this._config.slidesInFrame;
@@ -109,6 +110,13 @@ export default class SlideV {
   }
 
 
+  _getAvailableStep(step) {
+    return (Math.sign(step) === 1)
+      ? this._numberSlidesAfterFrame
+      : this._position;
+  }
+
+
   _setCssSlideElem(slideElem) {
     slideElem.style.display = 'inline-block';
     slideElem.style.width = `${100 / this._config.slidesInFrame}%`;
@@ -125,13 +133,6 @@ export default class SlideV {
     if (this._config.slideElemClass) {
       slideElem.classList.remove(this._config.slideElemClass);
     }
-  }
-
-
-  _getAvailableStep(step) {
-    return (Math.sign(step) === 1)
-      ? this._numberSlidesAfterFrame
-      : this._position;
   }
 
 
@@ -277,7 +278,8 @@ export default class SlideV {
 
 
   _deactivation({ initialMarkup, callback } = {}) {
-    this._buffer = null;
+    this._isInit = false;
+    this._buffer = [];
     this._eventUnsubscribe();
     if (initialMarkup) this._destoryDomStructure();
 
@@ -348,15 +350,21 @@ export default class SlideV {
 
 
   _initApi({ method, options }) { // может неудачное название метода
+    if (!this._isInit) {
+      return false;
+    }
     if (this._callbackBuffer) {
       this._callbackBuffer.push(method.bind(this, options));
+
       return this._callbackBuffer;
     }
     if (this._inProgress) {
       this._buffer.push(method.bind(this, options));
+
       return this._buffer;
     }
     method.call(this, options);
+
     return true;
   }
 
