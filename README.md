@@ -1,36 +1,240 @@
-slider-v is under development<br/>
 
-1. npm install<br/>
-2. start for development: npm run dev       http://localhost:8080/<br/>
-   start for production: npm run prod<br/>
+# Slide-V - classic carousel
+Slide-V provides basic functionality to easy using and opportunity adding new features through API. In the carousel implemented [buffer](https://codepen.io/StadnikEV/pen/ZxQdXZ) to call API. Not used frameworks, dependencies and external styles.
 
+NOTICE: on the NPM was spotted issue with updating documentation. Actual documentation located on [GitHub](https://github.com/stadnikEV/slide-v)
 
-Using:<br/>
+# Installing
+**Place script to HTML**
 
-let myCarousel = new slideV({<br/>
-  containerElem: ‘.my-carousel’,<br/>
-  transitionDuration: 200,<br/>
-  transitionTiming: 'linear',<br/>
-  elementsInFrame: 1,<br/>
-  step: 1,<br/>
-  startIndex: 1,<br/>
-  onInit: (curentIndex, numberElemAfterFrame) => {},<br/>
-  onChange: ({eventName, curentIndex, numberElemAfterFrame }) => {},<br/>
+    <script src"slide-v.min.js"></script>
 
-  onClick: (elem) => {}, don't work now<br/>
-})
+global variable:
+
+    SlideV
 
 
-API:<br/>
 
-next()<br/>
-prev()<br/>
-adjust(Steps)<br/>
-destory(InitialMarkup = true/false)<br/>
-init()<br/>
-getState()<br/>
-goTo(index)<br/>
-prepend(item)<br/>
-append(item)<br/>
-insert(item, index)<br/>
-remove(fromIndex)
+**Use module system**
+
+	import SlideV from 'slide-v';
+
+   or
+
+    const SlideV = require('slide-v');
+
+# Using
+
+Slide-V  use your DOM structure:
+
+	<div class="container">
+	    <div> slide 0 </div>
+	    <div> slide 1 </div>
+	    <div> slide 2 </div>
+	</div>
+###
+	<script>
+	    new SlideV({
+	      containerSelector: '.container'
+	    })
+	</script>
+
+# Configuration
+
+	new SlideV({
+	    containerSelector: '.container',
+	    slidesInFrame: 1,
+	    step: slidesInFrame,
+	    transitionDuration: 300,
+	    slideElemClass: 'class-name',
+	    movingElemClass: 'class-name',
+	    onMoveEnd: () => {},
+	    onSlideClick: (slideElem) => {},
+	})
+| property | data | default | description |
+|--|:--:|:--:|--|
+| containerSelector (*required prop*) |DOM element [example](https://codepen.io/StadnikEV/pen/VXLNRo), string [example](https://codepen.io/StadnikEV/pen/pLjMyj) | - | Slide-v creating additional "movingElem" inside the "container" and placing child elements of "container" inside to "movingElem".  
+| slidesInFrame | number | 1 | Number of slides displayed in frame of "container". [example](https://codepen.io/StadnikEV/pen/PRqMzM)  
+|step|number| slidesInFrame | Number of moving slides per one step. [example](https://codepen.io/StadnikEV/pen/mxebrE)
+|transitionDuration|number|300| Time at milliseconds during which carousel moving. "TransitionDuration" it is "css" property. [example](https://codepen.io/StadnikEV/pen/yKYBXq)
+|slideElemClass|string|-|Adding class to slide elements on the initialization stage. This class will be add to slide elements which was added to carousel through API.  [example](https://codepen.io/StadnikEV/pen/QmjLmr)
+|movingElemClass|string|-|Adding class to "movingElem" which was created inside "container". [example](https://codepen.io/StadnikEV/pen/wmKwEy)
+|onMoveEnd|function|-|Event handler of ending moving. [example](https://codepen.io/StadnikEV/pen/pLjoeM)
+|onSlideClick|function|-|Event handler of mouse click on slide element. This slide element passing to parameters of function. [example](https://codepen.io/StadnikEV/pen/qoOBMP)
+
+# API
+
+## next
+
+    next ( { step: number, isAnimated = boolean, callback: function } )
+
+| parameter | data | default |
+|:--|:--:|:--:|
+| step | number | slidesInFrame |
+|isAnimated|boolean|true|
+|callback|function|-|
+
+**next()**
+Moving slides one step to left. If carousel moved to the end position then carousel will not moving on at this direction. [example](https://codepen.io/StadnikEV/pen/rdOVLq)
+
+**next({ step: number })**
+Moving slides one step to left  with specified "step". [example](https://codepen.io/StadnikEV/pen/rdOOde)
+
+**next({ isAnimated: boolean })**
+On/off animation of moving. If animation is off then event "onMoveEnd" do not fired. [example](https://codepen.io/StadnikEV/pen/jzbbpN)
+
+**next({ callback: function })**
+"Callback" function called asynchronously at the end of animation after event "onMoveEnd".  If "isAnimated = false" or carousel at the end position then "callback" function will be call in sync at the end of "next" method. [example](https://codepen.io/StadnikEV/pen/PRPPxX)
+
+## prev
+
+    prev ( { step: number, isAnimated: boolean, callback: function } )
+
+| parameter | data | default |
+|:--|:--:|:--:|
+| step | number | slidesInFrame |
+|isAnimated|boolean|true|
+|callback|function|-|
+
+**prev()**
+Moving slides one step to right. If carousel moved to the end position then carousel will not moving on at this direction. [example](https://codepen.io/StadnikEV/pen/rdOVLq)
+
+**prev({ step: number })**  
+Moving slides one step to right with specified "step". [example](https://codepen.io/StadnikEV/pen/rdOOde)
+
+**prev({ isAnimated: boolean })**
+On/off animation of moving. If animation is off then event "onMoveEnd" do not fired. [example](https://codepen.io/StadnikEV/pen/jzbbpN)
+
+**prev({ callback: function })**  
+"Callback" function called asynchronously at the end of animation after event "onMoveEnd".  If "isAnimated = false" or carousel at the end position then "callback" function will be call in sync at the end of "prev" method. [example](https://codepen.io/StadnikEV/pen/PRPPxX)
+
+## goTo
+
+    goTo ( index: number, { isAnimated: boolean, callback: function }  )
+| parameter | data | default |
+|:--|:--:|:--:|
+| index | number | 0 |
+|isAnimated|boolean|true|
+|callback|function|-|
+
+**goTo()**  
+Moving carousel to position at a zero index. [example](https://codepen.io/StadnikEV/pen/MVabwV)
+
+**goTo(index)**
+Moving carousel to position with specified "index". if "index" more/less of available value then carousel moving to end/start position. [example](https://codepen.io/StadnikEV/pen/wmGLdq)
+
+**goTo({ isAnimated })**
+On/off animation of moving. If animation is off then event "onMoveEnd" do not fired. [example](https://codepen.io/StadnikEV/pen/JLYbMP)
+
+**goTo({ callback })**
+"Callback" function called asynchronously at the end of animation after event "onMoveEnd".  If "isAnimated = false" or carousel at the end position then "callback" function will be call in sync at the end of "goTo" method. [example](https://codepen.io/StadnikEV/pen/rdOWQg)
+
+
+## getState
+
+
+    getState()
+
+Returns object with current position of the carousel. [example](https://codepen.io/StadnikEV/pen/qoOqeZ)
+
+    Object {
+      curentSlideIndex: number,
+      lastSlideIndex: number,
+      numberSlidesAfterFrame: number
+    }
+
+
+## prepend
+
+    prepend( newElem, { callback: function } )
+
+| parameter | data | default |
+|:--|:--:|:--:|
+| newElem | DOM element |-|
+|callback|function|-|
+
+**prepend(newElem)**  
+Adding new element to beginning of carousel. This parameter is required. [example](https://codepen.io/StadnikEV/pen/MVKwMZ)
+
+**prepend(newElem, { callback: function })**  
+"Callback" function called in sync at the end of "prepend" method. [example](https://codepen.io/StadnikEV/pen/YawQEV)
+
+
+## append
+
+    append( newElem, { callback: function } )
+
+| parameter | data | default |
+|:--|:--:|:--:|
+| newElem | DOM element |-|
+|callback|function|-|
+
+
+**append(newElem)**  
+Adding new element to end of carousel. This parameter is required. [example](https://codepen.io/StadnikEV/pen/NYxvqV)
+
+**append(newElem, { callback: function })**
+"Callback" function called in sync at the end of "append" method. [example](https://codepen.io/StadnikEV/pen/rdxzNe)
+
+
+## insert
+
+    insert( newElem, index, { callback: function } )
+
+| parameter | data | default |
+|:--|:--:|:--:|
+| newElem | DOM element | - |
+| index | number |-|
+| callback | function | - |
+
+**insert(newElem, index)**
+Adding new element before the element with specified "index". If element with specified "index" is not exist then new element will not add. Both parameter is required. [example](https://codepen.io/StadnikEV/pen/bvErRX)
+
+**insert(newElem, index, { callback: function })**
+"Callback" function called in sync at the end of "insert" method. [example](https://codepen.io/StadnikEV/pen/NYxvyP)
+
+
+## remove
+
+    remove( index, { callback: function } )
+
+| parameter | data | default |
+|:--|:--:|:--:|
+| index | number |-|
+| callback | function | - |
+
+**remove(index)**
+Removing element with specified "index". This parameter is required. [example](https://codepen.io/StadnikEV/pen/KoVJoy)
+
+**remove(index, { callback: function })**
+"Callback" function called in sync at the end of "remove" method. [example](https://codepen.io/StadnikEV/pen/zWreEJ)
+
+
+## destroy
+
+    destroy( { initialMarkup: boolean, callback: function } )
+| parameter | data | default |
+|:--|:--:|:--:|
+| initialMarkup | boolean |false|
+| callback | function | - |
+
+**destroy()**
+Removing all event listeners. After called "destroy" all methods of API will be not available. [example](https://codepen.io/StadnikEV/pen/MVKROe)
+
+**destroy({ initialMarkup })**
+Removing all event listeners and return "DOM structure" to initial state. [example](https://codepen.io/StadnikEV/pen/rdxgGv)
+
+**destroy({ callback })**
+"Callback" function called in sync at the end of "destroy" method. [example](https://codepen.io/StadnikEV/pen/XEXwbV)
+
+## Features
+
+**Buffer**
+
+ - All API placed to buffer will be call in order of queue. [example](https://codepen.io/StadnikEV/pen/ZxQdXZ)
+
+ - API which was passed with "callback" function will be call in order relative to each other. [example](https://codepen.io/StadnikEV/pen/jzWjQd)
+
+**Dynamic adaptive structure**
+
+Follow the [link](https://codepen.io/StadnikEV/pen/bvEXVz) and change window width of browser.
