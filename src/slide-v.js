@@ -7,7 +7,7 @@ export default class SlideV {
     if (!isCorrectContainerStructure(config)) return;
     this._config = setDefaultPropertyOfConfig(config);
     this._containerElem = config.containerSelector;
-    this._callback = () => {}; // сохраняем колбек в переменную для вызова в обработчике события
+    this._callback = () => {}; // сохраняем колбек в переменную для вызова в обработчике события onTransitionEnd
     this._onTransitionEnd = this._onTransitionEnd.bind(this);
     this._onClick = this._onClick.bind(this);
     this._onResize = this._onResize.bind(this);
@@ -396,7 +396,7 @@ export default class SlideV {
   }
 
 
-  goTo(position, { isAnimated = true, callback } = {}) {
+  goTo(position = 0, { isAnimated = true, callback } = {}) {
     this._initApi({
       method: this._goToPosition,
       options: { position, isAnimated, callback },

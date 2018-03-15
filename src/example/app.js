@@ -6,8 +6,6 @@ const prev = document.querySelector('.prev');
 const next = document.querySelector('.next');
 
 
-let steps = -4;
-
 const mySlideV = new SlideV({
   containerSelector: '.my-carousel',
   slidesInFrame: 1,
@@ -15,16 +13,7 @@ const mySlideV = new SlideV({
   transitionDuration: 1000,
   slideElemClass: 'slide',
   movingElemClass: 'movingContainer',
-  onMoveEnd: () => {
-    console.log(steps);
-    mySlideV.next({
-      step: steps,
-      callback: () => {
-        steps *= -1;
-        console.log(2);
-      },
-    });
-  },
+  onMoveEnd: () => {},
   onSlideClick(slideElem) {
     console.log(slideElem);
   },
@@ -37,6 +26,5 @@ prev.addEventListener('click', () => {
   mySlideV.prev();
 });
 
-mySlideV.next({
-  step: 4,
-});
+mySlideV.goTo(3);
+mySlideV.goTo();
