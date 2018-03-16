@@ -1,6 +1,6 @@
 {
   "name": "slide-v",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "clasic carousel (slide-v is under development)",
   "main": "./dist/slide-v.min.js",
   "scripts": {
