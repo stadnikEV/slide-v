@@ -7,7 +7,7 @@ NOTICE: on the NPM was spotted issue with updating documentation. Actual documen
 # Installing
 **Place script to HTML**
 
-    <script src"slide-v.min.js"></script>
+    <script src="slide-v.min.js"></script>
 
 global variable:
 

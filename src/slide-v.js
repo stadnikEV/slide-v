@@ -6,8 +6,8 @@ export default class SlideV {
   constructor(config) {
     if (!isCorrectContainerStructure(config)) return;
     this._config = setDefaultPropertyOfConfig(config);
-    this._containerElem = config.containerSelector;
-    this._callback = () => {}; // сохраняем колбек в переменную для вызова в обработчике события onTransitionEnd
+    this._containerElem = this._config.containerSelector;
+    this._callback = () => {}; // сохраняет колбек который передается при вызове API. Используется в обработчике окончания css анимации onTransitionEnd
     this._onTransitionEnd = this._onTransitionEnd.bind(this);
     this._onClick = this._onClick.bind(this);
     this._onResize = this._onResize.bind(this);
@@ -16,8 +16,8 @@ export default class SlideV {
 
 
   _init() {
-    this._isInit = true;
-    this._buffer = [];
+    this._isInit = true; // запрещает вызов любых API после вызова destoty({ initialMarkup })
+    this._buffer = []; // буфер в который помещаются API в ожидании своей очереди
     this._position = 0;
     this._numberSlidesAfterFrame = this._containerElem.children.length - this._config.slidesInFrame;
     this._createDomStructure();
@@ -29,22 +29,22 @@ export default class SlideV {
     this._containerElem.style.overflow = 'hidden';
     this._containerElem.style.position = 'relative';
 
-    this._movingElem = document.createElement('div');
+    this._movingElem = document.createElement('div'); // элемент который перемещается внутри containerElem
     this._movingElem.style.position = 'relative';
     this._movingElem.style.whiteSpace = 'nowrap';
     this._movingElem.style.left = '0';
     this._movingElem.style.transitionProperty = 'left';
-    this._movingElem.style.transitionDuration = `${this._config.transitionDuration}ms`;
+
     if (this._config.movingElemClass) {
-      this._movingElem.classList.add(this._config.movingElemClass); // пустая строка не работает
+      this._movingElem.classList.add(this._config.movingElemClass);
     }
 
     const numberSlidesInContainerElem = this._containerElem.children.length;
 
-    for (let i = 0; i < numberSlidesInContainerElem; i += 1) {
+    for (let i = 0; i < numberSlidesInContainerElem; i += 1) { // поместить дочерние элементы из containerElem в movingElem
       const slideElem = this._containerElem.firstElementChild;
       this._setCssSlideElem(slideElem);
-      this._movingElem.appendChild(slideElem);
+      this._movingElem.append(slideElem);
     }
     this._containerElem.prepend(this._movingElem);
 
@@ -52,21 +52,22 @@ export default class SlideV {
   }
 
 
-  _makeStep({ step, isAnimated = true, callback }) {
-    if (typeof callback === 'function') { // сохраняем колбек в переменную для вызова в обработчике события
+  _takeStep({ step, isAnimated = true, callback }) {
+    if (typeof callback === 'function') { // сохраняет колбек в переменную для вызова в обработчике окончания css анимации onTransitionEnd
       this._callback = callback;
     }
-
     this._inProgress = true;
+    const availableStep = this._getAvailableStep(step); // максимальное количество слайдов для перемещения
 
-    const availableStep = this._getAvailableStep(step);
-
-    const curentStep = (Math.abs(step) < availableStep)
+    const curentStep = (Math.abs(step) < availableStep) // количество перемещаемых слайдов на данном шаге
       ? step
       : availableStep * Math.sign(step);
 
     if (curentStep === 0) {
-      this._onTransitionEnd({ isOnMoveEnd: false }); // думаю можно вызвать обработчик, событие тут не нужно
+      this._callbackHandler({ callback: this._callback }); // this._callback -  callback функция которая была сохраненнена при вызове API метода
+      this._inProgress = false;
+      this._callApiFromBuffer(); // запустить следующее API из буфера
+
       return curentStep;
     }
 
@@ -74,35 +75,45 @@ export default class SlideV {
     this._numberSlidesAfterFrame += -curentStep;
 
     const slideWidth = parseFloat(getComputedStyle(this._movingElem.firstElementChild).width);
-    const endPositionLeft = -this._position * slideWidth;
-    this._movingElem.style.left = `${endPositionLeft}px`;
+    const positionLeft = -this._position * slideWidth;
+    this._movingElem.style.left = `${positionLeft}px`;
     this._movingElem.style.transitionDuration = `${this._config.transitionDuration}ms`;
 
     if (!isAnimated) {
-      this._movingElem.style.transitionDuration = ''; // проблема с Duration = 1ms. Заметно дерганье
-      this._onTransitionEnd({ isOnMoveEnd: false });
+      this._movingElem.style.transitionDuration = ''; // Duration = 1ms. Дергается!!!
+      this._callbackHandler({ callback: this._callback }); // this._callback - сохраненный callback при вызове API метода
+      this._inProgress = false;
+      this._callApiFromBuffer();
     }
 
     this._lastSlideWidth = slideWidth; // необходимо для onResize
-    this._step = curentStep; // необходимо для onResize
+    this._curentStep = curentStep; // необходимо для onResize
 
     return curentStep;
   }
 
+  /*
+  * Обработчик события окончания css анимации
+  */
 
-  _onTransitionEnd({ isOnMoveEnd = true } = {}) {
-    if (isOnMoveEnd) this._onMoveEnd();
+  _onTransitionEnd() {
+    this._config.onMoveEnd();
+    this._callbackHandler({ callback: this._callback }); // this._callback - сохраненный callback при вызове API метода
+    this._inProgress = false;
+    this._callApiFromBuffer(); // запустить следующее API из буфера
+  }
 
-    if (typeof this._callback === 'function') {
-      this._callbackBuffer = [];
-      this._callback();
-      this._buffer = this._callbackBuffer.concat(this._buffer);
+  _callbackHandler({ callback }) {
+    if (typeof callback === 'function') {
+      this._callbackBuffer = []; // вспомогательный временный буфер. Необходим для помещения API из callback в основной буфер
+      callback();
+      this._buffer = this._callbackBuffer.concat(this._buffer); // добавление API методов из callback в основной буфер
       this._callbackBuffer = null;
       this._callback = null;
     }
+  }
 
-    this._inProgress = false;
-
+  _callApiFromBuffer() { // вызов следующего API метода из буфера
     if (this._buffer.length > 0) {
       const method = this._buffer.shift();
       method();
@@ -138,7 +149,7 @@ export default class SlideV {
 
   _goToPosition({ position, isAnimated, callback }) {
     const step = position - this._position;
-    return this._makeStep({ step, isAnimated, callback });
+    return this._takeStep({ step, isAnimated, callback });
   }
 
 
@@ -147,21 +158,13 @@ export default class SlideV {
     this._setCssSlideElem(slideElem);
     this._movingElem.prepend(slideElem);
 
-    if (lastNumberSlidesInMovingElem + 1 === this._movingElem.children.length) { // если случайно добавить один и тот же элемент
+    if (lastNumberSlidesInMovingElem + 1 === this._movingElem.children.length) { // проверить добавился ли элемент
       this._numberSlidesAfterFrame += 1;
     }
 
-    if (typeof callback === 'function') {
-      this._callbackBuffer = [];
-      callback();
-      this._buffer = this._callbackBuffer.concat(this._buffer);
-      this._callbackBuffer = null;
-    }
+    this._callbackHandler({ callback });
+    this._callApiFromBuffer();
 
-    if (this._buffer.length > 0) {
-      const method = this._buffer.shift();
-      method();
-    }
     return slideElem;
   }
 
@@ -171,21 +174,12 @@ export default class SlideV {
     this._setCssSlideElem(slideElem);
     this._movingElem.append(slideElem);
 
-    if (lastNumberSlidesInMovingElem + 1 === this._movingElem.children.length) { // если случайно добавить один и тот же элемент
+    if (lastNumberSlidesInMovingElem + 1 === this._movingElem.children.length) { // проверить добавился ли элемент
       this._numberSlidesAfterFrame += 1;
     }
+    this._callbackHandler({ callback });
+    this._callApiFromBuffer();
 
-    if (typeof callback === 'function') {
-      this._callbackBuffer = [];
-      callback();
-      this._buffer = this._callbackBuffer.concat(this._buffer);
-      this._callbackBuffer = null;
-    }
-
-    if (this._buffer.length > 0) {
-      const method = this._buffer.shift();
-      method();
-    }
     return slideElem;
   }
 
@@ -193,11 +187,7 @@ export default class SlideV {
   _insertBeforeSlideElem({ slideElem, index, callback }) {
     if (index < 0 || index > this._movingElem.children.length - 1) {
       console.warn('slide-V error: slideElem cannot be inserted. This index does not exists');
-
-      if (this._buffer.length > 0) {
-        const method = this._buffer.shift();
-        method();
-      }
+      this._callApiFromBuffer();
 
       return false;
     }
@@ -206,21 +196,11 @@ export default class SlideV {
     this._setCssSlideElem(slideElem);
     this._movingElem.children[index].before(slideElem);
 
-    if (lastNumberSlidesInMovingElem + 1 === this._movingElem.children.length) { // если случайно добавить один и тот же элемент
+    if (lastNumberSlidesInMovingElem + 1 === this._movingElem.children.length) { // проверить добавился ли элемент
       this._numberSlidesAfterFrame += 1;
     }
-
-    if (typeof callback === 'function') {
-      this._callbackBuffer = [];
-      callback();
-      this._buffer = this._callbackBuffer.concat(this._buffer);
-      this._callbackBuffer = null;
-    }
-
-    if (this._buffer.length > 0) {
-      const method = this._buffer.shift();
-      method();
-    }
+    this._callbackHandler({ callback });
+    this._callApiFromBuffer();
 
     return slideElem;
   }
@@ -230,30 +210,15 @@ export default class SlideV {
     if (index < 0
       || index > this._movingElem.children.length - 1) {
       console.warn('slide-V error: slideElem cannot be deleted. This index does not exists');
-
-      if (this._buffer.length > 0) {
-        const method = this._buffer.shift();
-        method();
-      }
+      this._callApiFromBuffer();
 
       return false;
     }
-
     this._numberSlidesAfterFrame -= 1;
     const removedElem = this._movingElem.removeChild(this._movingElem.children[index]);
     this._removeCssSlideElem(removedElem);
-
-    if (typeof callback === 'function') {
-      this._callbackBuffer = [];
-      callback(removedElem);
-      this._buffer = this._callbackBuffer.concat(this._buffer);
-      this._callbackBuffer = null;
-    }
-
-    if (this._buffer.length > 0) {
-      const method = this._buffer.shift();
-      method();
-    }
+    this._callbackHandler({ callback });
+    this._callApiFromBuffer();
 
     return removedElem;
   }
@@ -266,11 +231,9 @@ export default class SlideV {
       this._removeCssSlideElem(slideElem);
       this._containerElem.appendChild(slideElem);
     }
-
     this._containerElem.style.overflow = '';
     this._containerElem.style.position = '';
     this._containerElem.removeChild(this._movingElem);
-
     this._movingElem = null;
 
     return this._containerElem;
@@ -282,19 +245,9 @@ export default class SlideV {
     this._buffer = [];
     this._eventUnsubscribe();
     if (initialMarkup) this._destoryDomStructure();
+    this._callbackHandler({ callback });
 
-    if (typeof callback === 'function') {
-      this._callbackBuffer = [];
-      callback();
-      this._buffer = this._callbackBuffer.concat(this._buffer);
-      this._callbackBuffer = null;
-    }
     return this._containerElem;
-  }
-
-
-  _onMoveEnd() {
-    this._config.onMoveEnd();
   }
 
 
@@ -304,33 +257,35 @@ export default class SlideV {
 
 
   _onResize() {
-    if (this._inProgress) { // при медленном перемещении (10с), подвигай окно браузера
-      const slideWidth = parseFloat(getComputedStyle(this._movingElem.firstElementChild).width);
-      const endPositionLeft = -(this._position * slideWidth);
-      const slideWidthCoefficient = slideWidth / this._lastSlideWidth;
-      const startPositionLeft = endPositionLeft + (this._step * slideWidth);
-
-      this._movingElem.style.left = `${parseFloat(getComputedStyle(this._movingElem).left) * slideWidthCoefficient}px`;
+    if (this._inProgress) {
+      this._dynamicAdaptationStructure();
+    } else {
       this._movingElem.style.transitionDuration = '';
-
-      const progressMovingCoefficient = (endPositionLeft - parseFloat(getComputedStyle(this._movingElem).left)) / (endPositionLeft - startPositionLeft);
-
-      this._lastSlideWidth = slideWidth;
-
-      clearTimeout(this._timerResize);
-
-      this._timerResize = setTimeout(() => {
-        this._movingElem.style.transitionDuration = `${this._config.transitionDuration * progressMovingCoefficient}ms`;
-        this._movingElem.style.left = `${endPositionLeft}px`;
-      }, 0);
-
-      return;
+      const slideWidth = parseFloat(getComputedStyle(this._movingElem.firstElementChild).width);
+      this._movingElem.style.left = `${-this._position * slideWidth}px`;
     }
-    this._movingElem.style.transitionDuration = '';
+  }
+
+  _dynamicAdaptationStructure() { // изменение ширины слайдов и положения movingElem в процессе перемежения
     const slideWidth = parseFloat(getComputedStyle(this._movingElem.firstElementChild).width);
-    this._movingElem.style.left = `${-this._position * slideWidth}px`;
-    setTimeout(() => {
-      this._onTransitionEnd({ isOnMoveEnd: false });
+    const endPositionLeft = -(this._position * slideWidth); // позиция в которую перемещается movingElem
+    const slideWidthCoefficient = slideWidth / this._lastSlideWidth; // насколько изменилась ширина слайда по сравнению с последним событием onResize
+    const startPositionLeft = endPositionLeft + (this._curentStep * slideWidth); // позиция с которой перемещается movingElem
+    let curentPositionLeft = parseFloat(getComputedStyle(this._movingElem).left); // текущая позиция movingElem
+    curentPositionLeft *= slideWidthCoefficient; // требуемая текущая позиция movingElem c с учетом изменения ширины слайда
+
+    this._movingElem.style.left = `${curentPositionLeft}px`; // изменение текущего положения movingElem с учетом изменения ширины слайда
+    this._movingElem.style.transitionDuration = ''; // перемещение в новое положение curentPositionLeft должно быть без анимации
+
+    // текущий коэфициент прогресса перемещения от startPositionLeft до endPositionLeft
+    const progressMovingCoefficient = (endPositionLeft - curentPositionLeft) / (endPositionLeft - startPositionLeft);
+
+    this._lastSlideWidth = slideWidth;
+
+    this._timerResize = setTimeout(() => { // после корректировки положения movingElem, запускаем анимацию с новым значением transitionDuration
+      // изменение скорости премещения movingElem в соответствии с коэфициент прогресса перемещения
+      this._movingElem.style.transitionDuration = `${this._config.transitionDuration * progressMovingCoefficient}ms`;
+      this._movingElem.style.left = `${endPositionLeft}px`;
     }, 0);
   }
 
@@ -349,24 +304,29 @@ export default class SlideV {
   }
 
 
-  _initApi({ method, options }) { // может неудачное название метода
-    if (!this._isInit) {
+  _initApi({ method, options }) {
+    if (!this._isInit) { // запрещает использование API после destroy()
       return false;
     }
-    if (this._callbackBuffer) {
+    if (this._callbackBuffer) { // если был создан callbackBuffer поместить внего API. временный callbackBuffer создается при вызове колбека.
       this._callbackBuffer.push(method.bind(this, options));
 
       return this._callbackBuffer;
     }
-    if (this._inProgress) {
+    if (this._inProgress) { // если карусель находится в движении(асинхронный процесс), поместить API в буфер
       this._buffer.push(method.bind(this, options));
 
       return this._buffer;
     }
-    method.call(this, options);
+    method.call(this, options); // вызвать API не помещая в буфер
 
     return true;
   }
+
+
+  /*
+  *     API
+  */
 
 
   getState() {
@@ -380,7 +340,7 @@ export default class SlideV {
 
   next({ step = this._config.step, isAnimated = true, callback } = {}) {
     this._initApi({
-      method: this._makeStep,
+      method: this._takeStep,
       options: { step, isAnimated, callback },
     });
     return this;
@@ -389,7 +349,7 @@ export default class SlideV {
 
   prev({ step = this._config.step, isAnimated = true, callback } = {}) {
     this._initApi({
-      method: this._makeStep,
+      method: this._takeStep,
       options: { step: -step, isAnimated, callback },
     });
     return this;

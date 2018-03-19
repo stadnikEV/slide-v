@@ -10,7 +10,7 @@ const mySlideV = new SlideV({
   containerSelector: '.my-carousel',
   slidesInFrame: 1,
   step: 1,
-  transitionDuration: 1000,
+  transitionDuration: 5000,
   slideElemClass: 'slide',
   movingElemClass: 'movingContainer',
   onMoveEnd: () => {},
@@ -26,5 +26,4 @@ prev.addEventListener('click', () => {
   mySlideV.prev();
 });
 
-mySlideV.goTo(3);
-mySlideV.goTo();
+mySlideV.next();
