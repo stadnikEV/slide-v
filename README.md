@@ -2,9 +2,11 @@
 # Slide-V - classic carousel
 Slide-V provides basic functionality to easy using and opportunity adding new features through API. In the carousel implemented [buffer](https://codepen.io/StadnikEV/pen/ZxQdXZ) to call API. Not used frameworks, dependencies and external styles.
 
-NOTICE: on the NPM was spotted issue with updating documentation. Actual documentation located on [GitHub](https://github.com/stadnikEV/slide-v)
 
 # Installing
+
+    npm install slide-v
+
 **Place script to HTML**
 
     <script src="slide-v.min.js"></script>

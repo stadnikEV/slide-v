@@ -279,14 +279,15 @@ export default class SlideV {
 
     // текущий коэфициент прогресса перемещения от startPositionLeft до endPositionLeft
     const progressMovingCoefficient = (endPositionLeft - curentPositionLeft) / (endPositionLeft - startPositionLeft);
-
     this._lastSlideWidth = slideWidth;
+    clearTimeout(this._timerResize); // выполнить только последний setTimeout
 
     this._timerResize = setTimeout(() => { // после корректировки положения movingElem, запускаем анимацию с новым значением transitionDuration
       // изменение скорости премещения movingElem в соответствии с коэфициент прогресса перемещения
       this._movingElem.style.transitionDuration = `${this._config.transitionDuration * progressMovingCoefficient}ms`;
       this._movingElem.style.left = `${endPositionLeft}px`;
-    }, 0);
+      console.log(1);
+    }, 50);
   }
 
 
