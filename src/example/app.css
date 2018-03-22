@@ -3,7 +3,7 @@ html, body {
 }
 
 .my-carousel {
-  border: solid 1px gray;
+  border: solid 50px gray;
   width: 50%;
   margin: 0 auto;
 }
@@ -18,12 +18,14 @@ html, body {
   box-sizing: border-box;
 }
 
-.movingContainer {
+.moving-container {
+  border-top: solid 50px white;
+  border-bottom: solid 50px white;
   transition-timing-function: linear;
 }
 
 .button-container {
-  padding-top: 20px; 
+  padding-top: 20px;
   width: 50%;
   margin: 0 auto;
 }

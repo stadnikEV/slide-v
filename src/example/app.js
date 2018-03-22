@@ -4,15 +4,16 @@ require('./app.css');
 
 const prev = document.querySelector('.prev');
 const next = document.querySelector('.next');
+const destroy = document.querySelector('.destroy');
 
 
 const mySlideV = new SlideV({
   containerSelector: '.my-carousel',
-  slidesInFrame: 1,
-  step: 1,
-  transitionDuration: 5000,
+  slidesInFrame: 2,
+  step: 2,
+  transitionDuration: 200,
   slideElemClass: 'slide',
-  movingElemClass: 'movingContainer',
+  movingElemClass: 'moving-container',
   onMoveEnd: () => {},
   onSlideClick(slideElem) {
     console.log(slideElem);
@@ -25,5 +26,8 @@ next.addEventListener('click', () => {
 prev.addEventListener('click', () => {
   mySlideV.prev();
 });
+destroy.addEventListener('click', () => {
+  mySlideV.destroy({ initialMarkup: true });
+});
 
-mySlideV.next();
+// mySlideV.goTo(4, { isAnimated: false });
