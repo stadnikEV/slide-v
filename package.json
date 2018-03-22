@@ -1,6 +1,6 @@
 {
   "name": "slide-v",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "description": "Clasic carousel. In the carousel implemented buffer to call API. Not used frameworks, dependencies and external styles.",
   "main": "./dist/slide-v.min.js",
   "scripts": {
