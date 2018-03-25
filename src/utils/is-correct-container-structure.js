@@ -1,27 +1,26 @@
 
 export default function isCorrectContainerStructure(config) {
+  let selector = config.containerSelector;
+
   if (!('containerSelector' in config)) {
-    console.warn('Side-v error: "config.containerSelector" - is not defined. It is required parametr');
+    selector = '.slide-v';
+  }
+
+  if (selector === null || selector === undefined) {
+    console.warn('Side-v error: "selector" - uncorrect type of data. Use "String" type or DOM element');
 
     return false;
   }
 
-  if (config.containerSelector === null || config.containerSelector === undefined) {
-    console.warn('Side-v error: "config.containerSelector" - uncorrect type of data. Use "String" type or DOM element');
+  if (typeof selector !== 'string' && selector.nodeType !== 1) {
+    console.warn('Side-v error: "selector" - uncorrect type of data. Use "String" type or DOM element');
 
     return false;
   }
 
-  if (typeof config.containerSelector !== 'string' && config.containerSelector.nodeType !== 1) {
-    console.warn('Side-v error: "config.containerSelector" - uncorrect type of data. Use "String" type or DOM element');
-
-    return false;
-  }
-
-  const containerElem = (typeof config.containerSelector === 'string')
-    ? document.querySelector(config.containerSelector)
-    : config.containerSelector;
-
+  const containerElem = (typeof selector === 'string')
+    ? document.querySelector(selector)
+    : selector;
 
   if (containerElem === null) {
     console.warn('Side-v error: "containerElem" - it is not DOM Element');
@@ -40,6 +39,7 @@ export default function isCorrectContainerStructure(config) {
 
     return false;
   }
+
 
   return true;
 }

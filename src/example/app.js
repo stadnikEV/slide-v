@@ -9,12 +9,12 @@ const prepend = document.querySelector('.prepend');
 
 
 const mySlideV = new SlideV({
-  containerSelector: '.my-carousel',
+  // containerSelector: '.my-carousel',
   slidesInFrame: 1,
   step: 1,
   transitionDuration: 800,
   draggable: true,
-  dragThreshold: 0.5,
+  dragThreshold: 0,
   slideElemClass: 'slide',
   movingElemClass: 'moving-container',
   onMoveEnd: () => {

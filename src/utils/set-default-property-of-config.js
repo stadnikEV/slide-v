@@ -1,5 +1,6 @@
 
 export default function setDefaultPropertyOfConfig(config) {
+  config.containerSelector = config.containerSelector || '.slide-v';
   config.containerSelector = (typeof config.containerSelector === 'string')
     ? document.querySelector(config.containerSelector)
     : config.containerSelector;
@@ -14,7 +15,7 @@ export default function setDefaultPropertyOfConfig(config) {
   }
   config.draggable = true;
   config.dragThreshold = (config.dragThreshold === 0)
-    ? 0.01
+    ? 0
     : config.dragThreshold || 0.2;
 
   return config;

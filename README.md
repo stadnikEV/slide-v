@@ -1,5 +1,6 @@
 
 # Slide-V - classic carousel
+
 Slide-V provides basic functionality to easy using and opportunity adding new features through API. In the carousel implemented [buffer](https://codepen.io/StadnikEV/pen/ZxQdXZ) to call API. Not used frameworks, dependencies and external styles.
 
 
@@ -33,7 +34,9 @@ Slide-V  use your DOM structure:
 	    <div> slide 1 </div>
 	    <div> slide 2 </div>
 	</div>
-###
+
+  init:
+
 	<script>
 	    new SlideV({
 	      containerSelector: '.container'
@@ -47,23 +50,31 @@ Slide-V  use your DOM structure:
 	    slidesInFrame: 1,
 	    step: slidesInFrame,
 	    transitionDuration: 300,
+	    draggable: true,
+	    dragThreshold: 0.2,
 	    slideElemClass: 'class-name',
 	    movingElemClass: 'class-name',
 	    onMoveEnd: () => {},
 	    onSlideClick: (slideElem) => {},
 	})
-| property | data | default | description |
-|--|:--:|:--:|--|
-| containerSelector<br>(*required prop*) |DOM element<br>[example](https://codepen.io/StadnikEV/pen/VXLNRo),<br>string<br>[example](https://codepen.io/StadnikEV/pen/pLjMyj) | - | Slide-v creating additional "movingElem" inside the<br>"container" and placing child elements of<br>"container" inside to "movingElem".  
-| slidesInFrame | number | 1 | Number of slides displayed in frame of "container".<br>[example](https://codepen.io/StadnikEV/pen/PRqMzM)  
-|step|number| slidesInFrame | Number of moving slides per one step. [example](https://codepen.io/StadnikEV/pen/mxebrE)
-|transitionDuration|number|300| Time at milliseconds during which carousel moving.<br>"TransitionDuration" it is "css" property. [example](https://codepen.io/StadnikEV/pen/yKYBXq)
-|slideElemClass|string|-|Adding class to slide elements on the initialization stage.<br>This class will be add to slide elements which was added<br>to carousel through API.  [example](https://codepen.io/StadnikEV/pen/QmjLmr)
-|movingElemClass|string|-|Adding class to "movingElem" which was created inside<br>"container". [example](https://codepen.io/StadnikEV/pen/wmKwEy)
-|onMoveEnd|function|-|Event handler of ending moving. [example](https://codepen.io/StadnikEV/pen/pLjoeM)
-|onSlideClick|function|-|Event handler of mouse click on slide element.<br>This slide element passing to<br>parameters of function. [example](https://codepen.io/StadnikEV/pen/qoOBMP)
+| property | data<br>(default)| description |
+|--|:--:|--|
+|**containerSelector**|**DOM element,**<br>or<br>**string**<br><br>*( '.slide-v' )*|Slide-v creating additional "movingElem" inside the<br>"container" and placing child elements of "container"<br>inside to "movingElem".<br><br>DOM element: [example](https://codepen.io/StadnikEV/pen/VXLNRo), String: [example](https://codepen.io/StadnikEV/pen/pLjMyj)
+|**slidesInFrame**| **number**<br>*(1)* |Number of slides displayed in frame of "container".<br>[example](https://codepen.io/StadnikEV/pen/PRqMzM)  
+|**step**|**number**<br>*(slidesInFrame)*| Number of moving slides per one step. [example](https://codepen.io/StadnikEV/pen/mxebrE)
+|**transitionDuration**|**number**<br>*(300)*|Time at milliseconds during which carousel moving.<br>"TransitionDuration" it is "css" property. [example](https://codepen.io/StadnikEV/pen/yKYBXq)
+|**draggable**|**boolean**<br>*(true)*|Enable or disable "Drag'n'Drop" [example](https://) <br>**(in the development)**
+|**dragThreshold**|**number**<br>*(0.2)*|The shift value at which the step is activated.<br>Available values from 0 to 1. [example](https://) <br>**(in the development)**
+|**slideElemClass**|**string**|Adding class to slide elements on the initialization stage.<br> This class will be add to slide elements which was added<br> to carousel through API.  [example](https://codepen.io/StadnikEV/pen/QmjLmr)
+|**movingElemClass**|**string**|Adding class to "movingElem" which was created inside<br>"container". [example](https://codepen.io/StadnikEV/pen/wmKwEy)
+|**onMoveEnd**|**function**|Event handler of ending moving. [example](https://codepen.io/StadnikEV/pen/pLjoeM)
+|**onSlideClick**|**function**|Event handler of mouse click on slide element.<br>This slide element passing to parameters of function.<br> [example](https://codepen.io/StadnikEV/pen/qoOBMP)
+
+
+<br>
 
 # API
+<br>  
 
 ## next
 
@@ -227,8 +238,9 @@ Removing all event listeners and return "DOM structure" to initial state. [examp
 
 **destroy({ callback })**  
 "Callback" function called in sync at the end of "destroy" method. [example](https://codepen.io/StadnikEV/pen/XEXwbV)
+<br><br>
 
-## Features
+# Features
 
 **Buffer**
 

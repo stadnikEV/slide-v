@@ -7,9 +7,11 @@ export default function () {
 
   window.describe(`Init Test - incorrect input data test for "containerSelector".
     Creating DOM structure.`, () => {
-    window.it('new SlideV( { } ) - container selector is not defined', (done) => {
+    window.it('new SlideV( { } ) - default containerSelector(".slide-v")', (done) => {
+      const container = document.querySelector('.slide-v');
+      container.innerHTML = '<div>slide 0</div> <div>slide 1</div> <div>slide 2</div> <div>slide 3</div> <div>slide 4</div>';
       mySlideV = new SlideV({});
-      chai.assert.equal(Object.keys(mySlideV).length, 0);
+      chai.assert.equal(container.firstElementChild.children.length, 5);
       done();
     });
 
