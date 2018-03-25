@@ -9,7 +9,7 @@ export default function () {
   If a slide with such an index is missing, slide is not added.`, () => {
     const testAddingElement = ({ index }) => {
       window.it(`insert(newElem, ${index}) - element added`, (done) => {
-        containerElem.innerHTML = '<div>slide 0</div> <div>slide 1</div> <div>slide 2</div> <div>slide 3</div> <div>slide 4</div>';
+        containerElem.innerHTML = '<div>slide 0</div> <div>slide 1</div> <div>slide 2</div> <div>slide 3</div>';
         mySlideV = new SlideV({
           containerSelector: '.carousel',
           slideElemClass: 'slide',
@@ -24,9 +24,9 @@ export default function () {
         const expectedElement = movingElem.children[index];
 
         chai.assert.equal(expectedElement, newElem, 'element does not found at the end position of movingElem');
-        chai.assert.equal(newElem.classList.contains('slide-v_slide'), true, 'missing class "slide-v_slide"');
+        chai.assert.equal(newElem.closest('[data-slide-v-elem="slide-elem"]'), newElem, 'missing attribute "[data-slide-v-elem="slide-elem"]"');
         chai.assert.equal(newElem.style.display, 'inline-block', 'missing style display="inline-block"');
-        chai.assert.equal(newElem.style.width, '100%', 'missing style width="100%"');
+        chai.assert.equal(newElem.style.width, '20%', 'missing style width="100%"');
         done();
       });
     };
@@ -55,7 +55,7 @@ export default function () {
       });
     };
 
-    for (let i = 0; i < 5; i += 1) {
+    for (let i = 0; i < 4; i += 1) {
       testAddingElement({ index: i });
     }
 

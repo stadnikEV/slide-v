@@ -1,11 +1,19 @@
+
 html, body {
   width: 100%;
 }
 
 .my-carousel {
-  border: solid 50px gray;
+  border: solid 100px gray;
   width: 50%;
   margin: 0 auto;
+  background-color: green;
+}
+
+.my-carousel div {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
 }
 
 .slide {
@@ -14,13 +22,15 @@ html, body {
   background-color: lightgray;
   text-align: center;
   font-size: 2rem;
-  border: solid 1px gray;
+  border: solid 1px green;
   box-sizing: border-box;
+  vertical-align: middle;
 }
 
 .moving-container {
-  border-top: solid 50px white;
-  border-bottom: solid 50px white;
+  border-top: solid 50px red;
+  border-bottom: solid 50px red;
+  padding: 20px 0;
   transition-timing-function: linear;
 }
 

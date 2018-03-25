@@ -22,9 +22,9 @@ export default function () {
       const lastElem = movingElem.lastElementChild;
 
       chai.assert.equal(lastElem, newElem, 'element does not found at the end position of movingElem');
-      chai.assert.equal(newElem.classList.contains('slide-v_slide'), true, 'missing class "slide-v_slide"');
+      chai.assert.equal(newElem.closest('[data-slide-v-elem="slide-elem"]'), newElem, 'missing attribute "[data-slide-v-elem="slide-elem"]"');
       chai.assert.equal(newElem.style.display, 'inline-block', 'missing style display="inline-block"');
-      chai.assert.equal(newElem.style.width, '100%', 'missing style width="100%"');
+      chai.assert.equal(newElem.style.width, '50%', 'missing style width="100%"');
 
       movingElem.removeChild(newElem);
 

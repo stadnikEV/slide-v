@@ -35,5 +35,11 @@ export default function isCorrectContainerStructure(config) {
     return false;
   }
 
+  if (config.dragThreshold < 0 || config.dragThreshold > 1) {
+    console.warn('Side-v error: "dragThreshold" - uncorrect value. The value must be from 0 to 1');
+
+    return false;
+  }
+
   return true;
 }

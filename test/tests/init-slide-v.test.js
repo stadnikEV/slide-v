@@ -88,9 +88,9 @@ export default function () {
       for (let i = 0; i < movingElem.children.length; i += 1) {
         const elem = movingElem.children[i];
         chai.assert.equal(elem.innerHTML, `slide ${i}`, 'sequence of slides does not correspond to the original');
-        chai.assert.equal(elem.classList.contains('slide-v_slide'), true, 'missing class "slide-v_slide"');
+        chai.assert.equal(elem.closest('[data-slide-v-elem="slide-elem"]'), elem, 'missing attribute "[data-slide-v-elem="slide-elem"]"');
         chai.assert.equal(elem.style.display, 'inline-block', 'missing style display="inline-block"');
-        chai.assert.equal(elem.style.width, '100%', 'missing style width="100%"');
+        chai.assert.equal(elem.style.width, '20%', 'missing style width="100%"');
       }
       done();
     });
@@ -112,9 +112,9 @@ export default function () {
       for (let i = 0; i < movingElem.children.length; i += 1) {
         const elem = movingElem.children[i];
         chai.assert.equal(elem.innerHTML, `slide ${i}`, 'sequence of slides does not correspond to the original');
-        chai.assert.equal(elem.classList.contains('slide-v_slide'), true, 'missing class "slide-v_slide"');
+        chai.assert.equal(elem.closest('[data-slide-v-elem="slide-elem"]'), elem, 'missing attribute "[data-slide-v-elem="slide-elem"]"');
         chai.assert.equal(elem.style.display, 'inline-block', 'missing style display="inline-block"');
-        chai.assert.equal(elem.style.width, '100%', 'missing style width="100%"');
+        chai.assert.equal(elem.style.width, '20%', 'missing style width="100%"');
       }
       done();
     });
