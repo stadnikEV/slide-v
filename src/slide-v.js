@@ -10,11 +10,13 @@ export default class SlideV {
     // оборачиваем обработчики событий и сохраняем в пременные
     [
       '_onTransitionEnd',
+      '_onResize',
+      '_onTouchStart',
+      '_onTouchMove',
+      '_onTouchEnd',
       '_onMouseDown',
       '_onMouseMove',
-      '_onMouseLeave',
       '_onMouseUp',
-      '_onResize',
       '_onCancelDragTransitionEnd',
     ].forEach((handler) => {
       this[handler] = this[handler].bind(this);
@@ -39,13 +41,12 @@ export default class SlideV {
     this._isInit = true;
     // буфер в который помещаются API в ожидании своей очереди
     this._buffer = [];
-    this._curentSlideIndex = 0;
+    this._position = 0;
     this._numberOfSlides = this._containerElem.children.length;
     this._numberSlidesAfterFrame = this._numberOfSlides - this._config.slidesInFrame;
     this._createDomStructure();
     this._eventSubscribe();
   }
-
 
   _createDomStructure() {
     this._containerElem.style.overflow = 'hidden';
@@ -68,9 +69,9 @@ export default class SlideV {
     }
     // задать ширину элементам
     this._setWidths();
+
     this._containerElem.prepend(this._movingElem);
   }
-
 
   _setCssSlideElem(slideElem) {
     slideElem.style.display = 'inline-block';
@@ -80,7 +81,6 @@ export default class SlideV {
       slideElem.classList.add(this._config.slideElemClass);
     }
   }
-
 
   _setWidths() {
     this._movingElem.style.width = `${(100 / this._config.slidesInFrame) * this._numberOfSlides}%`;
@@ -93,29 +93,6 @@ export default class SlideV {
 
   /*
   *
-  *   Events
-  *
-  */
-
-
-  _eventSubscribe() {
-    window.addEventListener('resize', this._onResize);
-    this._movingElem.addEventListener('transitionend', this._onTransitionEnd);
-    this._movingElem.addEventListener('mousedown', this._onMouseDown);
-    this._containerElem.addEventListener('dragstart', this._onDragStart);
-  }
-
-
-  _eventUnsubscribe() {
-    window.removeEventListener('resize', this._onResize);
-    this._movingElem.removeEventListener('transitionend', this._onTransitionEnd);
-    this._movingElem.removeEventListener('mousedown', this._onMouseDown);
-    this._containerElem.removeEventListener('dragstart', this._onDragStart);
-  }
-
-
-  /*
-  *
   *     API
   *
   */
@@ -123,7 +100,7 @@ export default class SlideV {
 
   getState() {
     return {
-      curentSlideIndex: this._curentSlideIndex,
+      curentSlideIndex: this._position,
       numberSlidesAfterFrame: this._numberSlidesAfterFrame,
       lastSlideIndex: this._numberOfSlides - 1,
     };
@@ -230,32 +207,26 @@ export default class SlideV {
 
 
   _goToPosition({ position, isAnimated, callback }) {
-    const step = position - this._curentSlideIndex;
+    const step = position - this._position;
     return this._takeStep({ step, isAnimated, callback });
   }
 
 
   _takeStep({ step, isAnimated = true, callback }) {
     this._inMovingProgress = true;
-    // доступное количество слайдов для перемещения
-    const availableStep = this._getAvailableStep(step);
-    // количество перемещаемых слайдов на данном шаге
-    const curentStep = (Math.abs(step) < availableStep)
-      ? step
-      : availableStep * Math.sign(step);
+    // Проверить был ли посчитан this._curentStep в другом методе
+    this._curentStep = this._getСurentStep(step);
 
-    if (curentStep === 0) {
+    if (this._curentStep === 0) {
       this._inMovingProgress = false;
       this._callbackHandler({ callback });
       this._callApiFromBuffer();
       return;
     }
 
-    this._curentSlideIndex += curentStep;
-    this._numberSlidesAfterFrame += -curentStep;
-    const slideWidth = parseFloat(getComputedStyle(this._movingElem.firstElementChild).width);
-    const positionLeft = -this._curentSlideIndex * slideWidth;
-    this._movingElem.style.left = `${positionLeft}px`;
+    this._movingElem.style.left = `${this._getNextPositionLeft()}px`;
+    this._position += this._curentStep;
+    this._numberSlidesAfterFrame += -this._curentStep;
 
     if (!isAnimated) {
       this._inMovingProgress = false;
@@ -267,17 +238,23 @@ export default class SlideV {
     this._movingElem.style.transitionDuration = `${this._config.transitionDuration}ms`;
     // сохраняет колбек в переменную для вызова в обработчике окончания css анимации onTransitionEnd
     this._callback = callback;
-    // необходимо для onResize
-    this._lastSlideWidth = slideWidth;
-    // необходимо для onResize
-    this._curentStep = curentStep;
   }
 
-
-  _getAvailableStep(step) {
-    return (Math.sign(step) === 1)
+  _getСurentStep(step) {
+    // доступное количество слайдов для перемещения
+    const availableStep = (Math.sign(step) === 1)
       ? this._numberSlidesAfterFrame
-      : this._curentSlideIndex;
+      : this._position;
+    return (Math.abs(step) < availableStep)
+      ? step
+      : availableStep * Math.sign(step);
+  }
+
+  _getNextPositionLeft() {
+    const curentSlideWidth = parseFloat(getComputedStyle(this._movingElem.firstElementChild).width);
+    // необходимо для onResize
+    this._lastSlideWidth = curentSlideWidth;
+    return -(this._position + this._curentStep) * curentSlideWidth;
   }
 
 
@@ -436,101 +413,159 @@ export default class SlideV {
 
   /*
   *
+  *   Events
+  *
+  */
+
+
+  _eventSubscribe() {
+    window.addEventListener('resize', this._onResize);
+    this._movingElem.addEventListener('transitionend', this._onTransitionEnd);
+    this._containerElem.addEventListener('dragstart', this._onDragStart);
+    this._movingElem.addEventListener('mousedown', this._onMouseDown);
+    this._movingElem.addEventListener('touchstart', this._onTouchStart);
+
+    if (!this._config.draggable) return;
+
+    this._movingElem.addEventListener('touchmove', this._onTouchMove);
+    this._movingElem.addEventListener('touchend', this._onTouchEnd);
+    document.addEventListener('mousemove', this._onMouseMove);
+    document.addEventListener('mouseup', this._onMouseUp);
+  }
+
+
+  _eventUnsubscribe() {
+    window.removeEventListener('resize', this._onResize);
+    this._movingElem.removeEventListener('transitionend', this._onTransitionEnd);
+    this._containerElem.removeEventListener('dragstart', this._onDragStart);
+    this._movingElem.removeEventListener('mousedown', this._onMouseDown);
+    this._movingElem.removeEventListener('touchstart', this._onTouchStart);
+
+    if (!this._config.draggable) return;
+
+    this._movingElem.removeEventListener('touchmove', this._onTouchMove);
+    this._movingElem.removeEventListener('touchend', this._onTouchEnd);
+    document.removeEventListener('mousemove', this._onMouseMove);
+    document.removeEventListener('mouseup', this._onMouseUp);
+  }
+
+
+  /*
+  *
   *   Drag & drop, onClick event
   *
   */
 
-  // Обработчик события нажатия кнопки мыши
-  _onMouseDown(event) {
-    // если не левая кнопка мыши
-    if (event.which > 1 || this._inMovingProgress) {
-      return;
-    }
-    this._startDragPos = parseFloat(this._movingElem.style.left);
-    this._clickСoordinate = event.clientX;
-    this._movingElem.addEventListener('mouseup', this._onMouseUp);
 
-    if (!this._config.draggable) {
-      return;
-    }
-    this._movingElem.addEventListener('mousemove', this._onMouseMove);
-    this._movingElem.addEventListener('mouseleave', this._onMouseLeave);
+  _onMouseDown(event) {
+    if (this._inMovingProgress || event.which !== 1) return;
+    this._isMouseDown = true;
+    this._clickX = event.clientX;
+    this._startDragPos = parseFloat(this._movingElem.style.left);
   }
 
+  _onTouchStart(event) {
+    // отменяет mousedown(через 300мс) для события touchstart
+    event.preventDefault(); // проверить не применится ли это при всплытии!!!!!!!!!!
+    if (this._inMovingProgress) return;
+    this._touchX = event.changedTouches[0].pageX;
+    this._startDragPos = parseFloat(this._movingElem.style.left);
+  }
 
-  // Обработчик события при перетаскивании(если нажата левая кнопка мыши)
   _onMouseMove(event) {
-    this._dragShift = this._clickСoordinate - event.clientX;
-    // доступное количество слайдов для перемещения
-    const availableStep = this._getAvailableStep(this._dragShift);
-    // текущее количество перемещаемых слайдов на данном шаге
-    this._curentStep = (this._config.step < availableStep)
-      ? this._config.step
-      : availableStep;
+    if (!this._isMouseDown || this._clickX === event.clientX) return;
+    this._dragShift = this._clickX - event.clientX;
+    this._dragMove();
+  }
+
+  _onTouchMove(event) {
+    this._dragShift = this._touchX - event.changedTouches[0].pageX;
+    this._dragMove();
+  }
+
+  // алгоритм перемещения movingElem при перетаскивании
+  _dragMove() {
+    this._inMovingProgress = true;
+
+    const dragdDirection = Math.sign(this._dragShift);
+
+    // не пересчитывать this._curentStep и this._nextPositionLeft для каждого события
+    if (this._dragdDirection !== dragdDirection) {
+      this._dragdDirection = dragdDirection;
+      this._curentStep = this._getСurentStep(dragdDirection * this._config.step);
+      this._nextPositionLeft = this._getNextPositionLeft();
+    }
 
     this._movingElem.style.transitionDuration = '';
-    // конечное положение сдвиг слайдов влево
-    if (this._numberSlidesAfterFrame === 0 && this._dragShift > 0) {
+
+    // перемещение для начального положения
+    if (this._position === 0 && dragdDirection === -1) {
       this._movingElem.style.left = `${this._startDragPos - (this._dragShift * 0.1)}px`;
       return;
     }
-    // начальне положение сдвиг слайдов вправо
-    if (this._curentSlideIndex === 0 && this._dragShift < 0) {
+    // перемещение для конечного положения
+    if (this._numberSlidesAfterFrame === 0 && dragdDirection === 1) {
       this._movingElem.style.left = `${this._startDragPos - (this._dragShift * 0.1)}px`;
       return;
     }
-    this._movingElem.style.left = `${this._startDragPos - (this._dragShift / (this._config.slidesInFrame / this._curentStep))}px`;
+    // перемещение между начальным и конечным положениями
+    const dragShiftCoefficient = Math.abs(this._curentStep / this._config.slidesInFrame);
+    this._movingElem.style.left = `${this._startDragPos - (this._dragShift * dragShiftCoefficient)}px`;
+
+    // ограничение перемещения если слайд находится в ожидаемом положении
+    if (parseFloat(this._movingElem.style.left) < this._nextPositionLeft && dragdDirection === 1) {
+      // что бы сработал onTransitionEnd, не доводим до конца на 0.1px
+      this._movingElem.style.left = `${this._nextPositionLeft + (dragdDirection * 0.1)}px`;
+    }
+    if (parseFloat(this._movingElem.style.left) > this._nextPositionLeft && dragdDirection === -1) {
+      // что бы сработал onTransitionEnd, не доводим до конца на 1px
+      this._movingElem.style.left = `${this._nextPositionLeft + (dragdDirection * 0.1)}px`;
+    }
   }
 
+  _onTouchEnd(event) {
+    this._dragEnd(event.target);
+  }
 
-  // Обработчик события отжатия кнопки мыши
   _onMouseUp(event) {
-    // если не левая кнопка мыши
-    if (event.which > 1) {
-      return;
-    }
-    // определение клика по слайду
+    if (!this._isMouseDown) return;
+    this._isMouseDown = false;
+    this._dragEnd(event.target);
+  }
+
+  // определение клика и перетаскивания. Запуск соответствующих метолов
+  _dragEnd(clickedElem) {
+    this._dragdDirection = null;
+    this._inMovingProgress = false;
+    // если небыло сдвига или сдвиг меньше 3px - то это клик
     if (!this._dragShift || Math.abs(this._dragShift) < 3) {
-      const elem = event.target.closest('[data-slide-v-elem="slide-elem"]');
+      const elem = clickedElem.closest('[data-slide-v-elem="slide-elem"]');
       if (elem) this._config.onSlideClick(elem);
     }
-    this._movingElem.removeEventListener('mouseup', this._onMouseUp);
-
-    // запустить метод после бросания если был сдвиг
+    // если был сдвиг
     if (this._dragShift > 0 || this._dragShift < 0) {
       this._dropMoving();
     }
-    this._movingElem.removeEventListener('mousemove', this._onMouseMove);
-    this._movingElem.removeEventListener('mouseleave', this._onMouseLeave);
-  }
-
-
-  _onMouseLeave() {
-    console.log('_onMouseLeave');
-    // запустить метод после бросания
-    if (this._dragShift > 0 || this._dragShift < 0) {
-      this._dropMoving();
-    }
-    this._movingElem.removeEventListener('mouseup', this._onMouseUp);
-    this._movingElem.removeEventListener('mousemove', this._onMouseMove);
-    this._movingElem.removeEventListener('mouseleave', this._onMouseLeave);
   }
 
 
   // движение при бросании
   _dropMoving() {
+    const curentPositionLeft = parseFloat(this._movingElem.style.left);
+    // получить метод движения для завершения drag&drop
     const dropMethod = this._getDropMethod();
     dropMethod.call(this);
-    // ускорение премещения в зависимости от проресса перемещения при перетаскивании
+    this._dragShift = 0;
+
+    // ускорение премещения при перетаскивании в зависимости от положения movingElem
     if (dropMethod === this.next || dropMethod === this.prev) {
-      const progressDragCoefficient = this._getProgressDragCoefficient();
+      const progressDragCoefficient = this._getProgressDragCoefficient(curentPositionLeft);
       this._movingElem.style.transitionDuration = `${this._config.transitionDuration - (this._config.transitionDuration * progressDragCoefficient)}ms`;
     }
-    this._dragShift = 0;
   }
 
 
-  // получение метода при бросании
+  // получение метода для бросания
   _getDropMethod() {
     const slideWidth = parseFloat(getComputedStyle(this._movingElem.firstElementChild).width);
     const Threshold = slideWidth * this._config.dragThreshold;
@@ -538,7 +573,7 @@ export default class SlideV {
     if (this._dragShift > Threshold && this._numberSlidesAfterFrame !== 0) {
       return this.next;
     }
-    if (this._dragShift < -Threshold && this._curentSlideIndex !== 0) {
+    if (this._dragShift < -Threshold && this._position !== 0) {
       return this.prev;
     }
     return this._cancelDrag;
@@ -546,12 +581,11 @@ export default class SlideV {
 
 
   // коефицеинт премещения при перетаскивании (0 -> 1)
-  _getProgressDragCoefficient() {
-    const startPosition = this._startDragPos;
-    const endPosition = -(this._curentSlideIndex * this._lastSlideWidth);
-    const range = endPosition - startPosition;
-    const progress = (this._dragShift / (this._config.slidesInFrame / Math.abs(this._curentStep)));
-    return Math.abs(progress / range);
+  _getProgressDragCoefficient(curentPositionLeft) {
+    const endPositionLeft = this._nextPositionLeft;
+    const startPositionLeft = endPositionLeft + (this._curentStep * this._lastSlideWidth);
+    // const curentPositionLeft = parseFloat(window.getComputedStyle(this._movingElem).left); // !!!!!!  Почему не работает так  ??????????
+    return (curentPositionLeft - startPositionLeft) / (endPositionLeft - startPositionLeft);
   }
 
 
@@ -560,7 +594,7 @@ export default class SlideV {
     this._inMovingProgress = true;
     this._movingElem.style.transitionDuration = '50ms';
     this._movingElem.style.left = `${this._startDragPos}px`;
-
+    // для анимации отмены drag&drop обработчик onTransitionEnd не должен вызываться
     this._movingElem.removeEventListener('transitionend', this._onTransitionEnd);
     this._movingElem.addEventListener('transitionend', this._onCancelDragTransitionEnd);
   }
@@ -588,7 +622,7 @@ export default class SlideV {
     }
     this._movingElem.style.transitionDuration = '';
     const slideWidth = parseFloat(getComputedStyle(this._movingElem.firstElementChild).width);
-    this._movingElem.style.left = `${-this._curentSlideIndex * slideWidth}px`;
+    this._movingElem.style.left = `${-this._position * slideWidth}px`;
   }
 
 
@@ -596,7 +630,7 @@ export default class SlideV {
   _dynamicAdaptationStructure() {
     const slideWidth = parseFloat(getComputedStyle(this._movingElem.firstElementChild).width);
     // позиция в которую перемещается movingElem
-    const endPositionLeft = -(this._curentSlideIndex * slideWidth);
+    const endPositionLeft = -(this._position * slideWidth);
     // насколько изменилась ширина слайда по сравнению с последним событием onResize
     const slideWidthCoefficient = slideWidth / this._lastSlideWidth;
     // позиция с которой перемещается movingElem

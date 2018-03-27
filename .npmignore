@@ -8,3 +8,4 @@ package-lock.json
 webpack.config.js
 npm-debug.log
 plan.txt
+dist/slide-v.min.js(0.0.13)

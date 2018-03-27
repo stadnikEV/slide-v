@@ -63,8 +63,8 @@ Slide-V  use your DOM structure:
 |**slidesInFrame**| **number**<br>*(1)* |Number of slides displayed in frame of "container".<br>[example](https://codepen.io/StadnikEV/pen/PRqMzM)  
 |**step**|**number**<br>*(slidesInFrame)*| Number of moving slides per one step. [example](https://codepen.io/StadnikEV/pen/mxebrE)
 |**transitionDuration**|**number**<br>*(300)*|Time at milliseconds during which carousel moving.<br>"TransitionDuration" it is "css" property. [example](https://codepen.io/StadnikEV/pen/yKYBXq)
-|**draggable**|**boolean**<br>*(true)*|Enable or disable "Drag'n'Drop" [example](https://) <br>**(in the development)**
-|**dragThreshold**|**number**<br>*(0.2)*|The shift value at which the step is activated.<br>Available values from 0 to 1. [example](https://) <br>**(in the development)**
+|**draggable**|**boolean**<br>*(true)*|Enable or disable "Drag'n'Drop" [example](https://)
+|**dragThreshold**|**number**<br>*(0.2)*|The shift value at which the step is activated.<br>Available values from 0 to 1. [example](https://)
 |**slideElemClass**|**string**|Adding class to slide elements on the initialization stage.<br> This class will be add to slide elements which was added<br> to carousel through API.  [example](https://codepen.io/StadnikEV/pen/QmjLmr)
 |**movingElemClass**|**string**|Adding class to "movingElem" which was created inside<br>"container". [example](https://codepen.io/StadnikEV/pen/wmKwEy)
 |**onMoveEnd**|**function**|Event handler of ending moving. [example](https://codepen.io/StadnikEV/pen/pLjoeM)

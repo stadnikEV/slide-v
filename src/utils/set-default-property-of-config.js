@@ -10,10 +10,10 @@ export default function setDefaultPropertyOfConfig(config) {
   config.onMoveEnd = config.onMoveEnd || (() => {});
   config.onSlideClick = config.onSlideClick || (() => {});
 
-  if (config.draggable === false) {
-    return config;
-  }
-  config.draggable = true;
+  config.draggable = (config.draggable === false)
+    ? false
+    : config.draggable || true;
+
   config.dragThreshold = (config.dragThreshold === 0)
     ? 0
     : config.dragThreshold || 0.2;
