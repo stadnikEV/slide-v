@@ -7,23 +7,26 @@ const next = document.querySelector('.next');
 const destroy = document.querySelector('.destroy');
 const prepend = document.querySelector('.prepend');
 
+const mySlideV = new SlideV();
 
-const mySlideV = new SlideV({
-  // containerSelector: '.my-carousel',
-  slidesInFrame: 3,
-  step: 2,
-  transitionDuration: 1000,
-  draggable: true,
-  dragThreshold: 0.2,
-  slideElemClass: 'slide',
-  movingElemClass: 'moving-container',
-  onMoveEnd: () => {
-    console.log('onMoveEnd');
-  },
-  onSlideClick(slideElem) {
-    console.log(slideElem);
-  },
-});
+// const mySlideV = new SlideV({
+//   containerSelector: '.my-carousel',
+//   slidesInFrame: 3,
+//   step: 4,
+//   transitionDuration: 300,
+//   draggable: true,
+//   dragThreshold: 0.2,
+//   slideElemClass: 'slide',
+//   movingElemClass: 'moving-container',
+//   onMoveEnd: () => {
+//     console.log('onMoveEnd');
+//   },
+//   onSlideClick(slideElem) {
+//     console.log(slideElem);
+//   },
+// });
+
+const newElem = document.querySelector('.img');
 
 next.addEventListener('click', () => {
   mySlideV.next();
@@ -32,10 +35,10 @@ prev.addEventListener('click', () => {
   mySlideV.prev();
 });
 destroy.addEventListener('click', () => {
-  mySlideV.destroy({ initialMarkup: true });
+  mySlideV.destroy();
 });
 prepend.addEventListener('click', () => {
-  mySlideV.remove(0);
+  mySlideV.insert(newElem, 0);
 });
 
 

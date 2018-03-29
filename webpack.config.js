@@ -17,7 +17,7 @@ module.exports = {
       {
         enforce: 'pre',
         test: /\.js$/,
-        exclude: /(node_modules|bower_components|dist|test\/mocha)/,
+        exclude: /(node_modules|bower_components|dist|test\/mocha|src\/utils\/matches-polyfill.js|src\/utils\/closest-polyfill.js|src\/utils\/math-sign-polyfil.js)/,
         loader: 'eslint-loader',
       },
       {

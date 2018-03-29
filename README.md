@@ -57,7 +57,7 @@ Slide-V  use your DOM structure:
 	    onMoveEnd: () => {},
 	    onSlideClick: (slideElem) => {},
 	})
-| property | data<br>(default)| description |
+| property | type<br>(default)| description |
 |--|:--:|--|
 |**containerSelector**|**DOM element,**<br>or<br>**string**<br><br>*( '.slide-v' )*|Slide-v creating additional "movingElem" inside the<br>"container" and placing child elements of "container"<br>inside to "movingElem".<br><br>DOM element: [example](https://codepen.io/StadnikEV/pen/VXLNRo), String: [example](https://codepen.io/StadnikEV/pen/pLjMyj)
 |**slidesInFrame**| **number**<br>*(1)* |Number of slides displayed in frame of "container".<br>[example](https://codepen.io/StadnikEV/pen/PRqMzM)  
@@ -80,7 +80,7 @@ Slide-V  use your DOM structure:
 
     next ( { step: number, isAnimated = boolean, callback: function } )
 
-| parameter | data | default |
+| parameter | type | default |
 |:--|:--:|:--:|
 | step | number | slidesInFrame |
 |isAnimated|boolean|true|
@@ -102,7 +102,7 @@ On/off animation of moving. If animation is off then event "onMoveEnd" do not fi
 
     prev ( { step: number, isAnimated: boolean, callback: function } )
 
-| parameter | data | default |
+| parameter | type | default |
 |:--|:--:|:--:|
 | step | number | slidesInFrame |
 |isAnimated|boolean|true|
@@ -123,7 +123,7 @@ On/off animation of moving. If animation is off then event "onMoveEnd" do not fi
 ## goTo
 
     goTo ( index: number, { isAnimated: boolean, callback: function }  )
-| parameter | data | default |
+| parameter | type | default |
 |:--|:--:|:--:|
 | index | number | 0 |
 |isAnimated|boolean|true|
@@ -160,7 +160,7 @@ Returns object with current position of the carousel. [example](https://codepen.
 
     prepend( newElem, { callback: function } )
 
-| parameter | data | default |
+| parameter | type | default |
 |:--|:--:|:--:|
 | newElem | DOM element |-|
 |callback|function|-|
@@ -176,7 +176,7 @@ Adding new element to beginning of carousel. This parameter is required. [exampl
 
     append( newElem, { callback: function } )
 
-| parameter | data | default |
+| parameter | type | default |
 |:--|:--:|:--:|
 | newElem | DOM element |-|
 |callback|function|-|
@@ -193,7 +193,7 @@ Adding new element to end of carousel. This parameter is required. [example](htt
 
     insert( newElem, index, { callback: function } )
 
-| parameter | data | default |
+| parameter | type | default |
 |:--|:--:|:--:|
 | newElem | DOM element | - |
 | index | number |-|
@@ -210,7 +210,7 @@ Adding new element before the element with specified "index". If element with sp
 
     remove( index, { callback: function } )
 
-| parameter | data | default |
+| parameter | type | default |
 |:--|:--:|:--:|
 | index | number |-|
 | callback | function | - |
@@ -225,7 +225,7 @@ Removing element with specified "index". This parameter is required. [example](h
 ## destroy
 
     destroy( { initialMarkup: boolean, callback: function } )
-| parameter | data | default |
+| parameter | type | default |
 |:--|:--:|:--:|
 | initialMarkup | boolean |false|
 | callback | function | - |
