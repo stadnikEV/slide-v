@@ -236,6 +236,12 @@ export default class SlideV {
 
   _takeStep({ step, isAnimated = true, callback }) {
     this._inMovingProgress = true;
+
+    if (this._config.draggable && this._config.transitionDuration > 700) {
+      this._movingElem.style.cursor = '';
+      this._movingElem.style.cursor = '';
+      this._movingElem.style.cursor = '';
+    }
     // Проверить был ли посчитан this._curentStep в другом методе
     this._curentStep = this._getСurentStep(step);
 
@@ -285,6 +291,11 @@ export default class SlideV {
   // Обработчик события окончания css анимации
   _onTransitionEnd() {
     this._inMovingProgress = false;
+    if (this._config.draggable && this._config.transitionDuration > 700) {
+      this._movingElem.style.cursor = '-webkit-grab';
+      this._movingElem.style.cursor = '-moz-grab';
+      this._movingElem.style.cursor = 'grab';
+    }
     this._config.onMoveEnd();
     this._callbackHandler({ callback: this._callback });
     this._callApiFromBuffer();
@@ -361,12 +372,12 @@ export default class SlideV {
   _insertBeforeSlideElem({ slideElem, index, callback }) {
     if (index < 0 || index > this._numberOfSlides - 1) {
       console.warn('slide-V error: slideElem cannot be inserted. This index does not exists');
+      this._callbackHandler({ callback });
       this._callApiFromBuffer();
       return;
     }
     const lastNumberSlidesInMovingElem = this._numberOfSlides;
     this._movingElem.insertBefore(slideElem, this._movingElem.children[index]);
-    // this._movingElem.children[index].before(slideElem);
     // проверить добавился ли элемент
     if (lastNumberSlidesInMovingElem + 1 === this._movingElem.children.length) {
       this._numberSlidesAfterFrame += 1;
@@ -382,6 +393,7 @@ export default class SlideV {
   _removeSlideElem({ index, callback }) {
     if (index < 0 || index > this._numberOfSlides - 1) {
       console.warn('slide-V error: slideElem cannot be deleted. This index does not exists');
+      this._callbackHandler({ callback });
       this._callApiFromBuffer();
       return;
     }
@@ -487,9 +499,11 @@ export default class SlideV {
     this._isMouseDown = true;
     this._clickX = event.clientX;
     this._startDragPos = parseFloat(this._movingElem.style.left);
-    this._movingElem.style.cursor = '-webkit-grabbing';
-    this._movingElem.style.cursor = '-moz-grabbing';
-    this._movingElem.style.cursor = 'grabbing';
+    if (this._config.draggable) {
+      this._movingElem.style.cursor = '-webkit-grabbing';
+      this._movingElem.style.cursor = '-moz-grabbing';
+      this._movingElem.style.cursor = 'grabbing';
+    }
   }
 
   _onTouchStart(event) {
@@ -556,6 +570,11 @@ export default class SlideV {
   _onMouseLeave(event) {
     if (!this._isMouseDown) return;
     this._isMouseDown = false;
+    if (this._config.draggable) {
+      this._movingElem.style.cursor = '-webkit-grab';
+      this._movingElem.style.cursor = '-moz-grab';
+      this._movingElem.style.cursor = 'grab';
+    }
     this._dragEnd(event.target);
   }
 
@@ -568,6 +587,11 @@ export default class SlideV {
   _onMouseUp(event) {
     if (!this._isMouseDown) return;
     this._isMouseDown = false;
+    if (this._config.draggable) {
+      this._movingElem.style.cursor = '-webkit-grab';
+      this._movingElem.style.cursor = '-moz-grab';
+      this._movingElem.style.cursor = 'grab';
+    }
     this._dragEnd(event.target);
   }
 
@@ -575,9 +599,6 @@ export default class SlideV {
   _dragEnd(clickedElem) {
     this._dragdDirection = null;
     this._inMovingProgress = false;
-    this._movingElem.style.cursor = '-webkit-grab';
-    this._movingElem.style.cursor = '-moz-grab';
-    this._movingElem.style.cursor = 'grab';
     // если небыло сдвига или сдвиг меньше 3px - то это клик
     if (!this._dragShift || Math.abs(this._dragShift) < 3) {
       const elem = clickedElem.closest('[data-slide-v-elem="slide-elem"]');
@@ -609,7 +630,8 @@ export default class SlideV {
   // получение метода для бросания
   _getDropMethod() {
     const containerWidth = this._containerElem.clientWidth;
-    const Threshold = containerWidth * this._config.dragThreshold;
+    // -2 нужно что бы работал коефициент dragThreshold = 1
+    const Threshold = (containerWidth * this._config.dragThreshold) - 2;
 
     if (this._dragShift > Threshold && this._numberSlidesAfterFrame !== 0) {
       return this.next;

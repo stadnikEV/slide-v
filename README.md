@@ -1,7 +1,15 @@
 
+
 # Slide-V - classic carousel
 
-Slide-V provides basic functionality to easy using and opportunity adding new features through API. In the carousel implemented [buffer](https://codepen.io/StadnikEV/pen/ZxQdXZ) to call API. Not used frameworks, dependencies and external styles.
+Slide-V provides basic functionality to easy using and opportunity adding new features through API. In the carousel implemented [API buffer](https://codepen.io/StadnikEV/pen/ZxQdXZ), drag & drop, [adaptive structure](https://codepen.io/StadnikEV/pen/bvEXVz). Not used frameworks, dependencies and external styles.
+
+
+ - [**Installing**](#installing)
+ - [**Using**](#using)
+ - [**Configuration**](#configuration)
+ - [**API**](#api)
+ - [**Features**](#features)
 
 
 # Installing
@@ -59,14 +67,14 @@ Slide-V  use your DOM structure:
 	})
 | property | type<br>(default)| description |
 |--|:--:|--|
-|**containerSelector**|**DOM element,**<br>or<br>**string**<br><br>*( '.slide-v' )*|Slide-v creating additional "movingElem" inside the<br>"container" and placing child elements of "container"<br>inside to "movingElem".<br><br>DOM element: [example](https://codepen.io/StadnikEV/pen/VXLNRo), String: [example](https://codepen.io/StadnikEV/pen/pLjMyj)
+|**containerSelector**|**DOM element,**<br>or<br>**string**<br><br>*( '.slide-v' )*|Slide-v creating additional "movingElem" inside<br>the "container" and placing child elements of<br> "container" inside to "movingElem".<br><br>Default: [example](https://codepen.io/StadnikEV/pen/gevjep)<br>DOM element: [example](https://codepen.io/StadnikEV/pen/VXLNRo)<br>String: [example](https://codepen.io/StadnikEV/pen/pLjMyj)
 |**slidesInFrame**| **number**<br>*(1)* |Number of slides displayed in frame of "container".<br>[example](https://codepen.io/StadnikEV/pen/PRqMzM)  
 |**step**|**number**<br>*(slidesInFrame)*| Number of moving slides per one step. [example](https://codepen.io/StadnikEV/pen/mxebrE)
 |**transitionDuration**|**number**<br>*(300)*|Time at milliseconds during which carousel moving.<br>"TransitionDuration" it is "css" property. [example](https://codepen.io/StadnikEV/pen/yKYBXq)
-|**draggable**|**boolean**<br>*(true)*|Enable or disable "Drag'n'Drop" [example](https://)
-|**dragThreshold**|**number**<br>*(0.2)*|The shift value at which the step is activated.<br>Available values from 0 to 1. [example](https://)
-|**slideElemClass**|**string**|Adding class to slide elements on the initialization stage.<br> This class will be add to slide elements which was added<br> to carousel through API.  [example](https://codepen.io/StadnikEV/pen/QmjLmr)
-|**movingElemClass**|**string**|Adding class to "movingElem" which was created inside<br>"container". [example](https://codepen.io/StadnikEV/pen/wmKwEy)
+|**draggable**|**boolean**<br>*(true)*|Enable or disable "Drag'n'Drop" [example](https://codepen.io/StadnikEV/pen/pLWaML)
+|**dragThreshold**|**number**<br>*(0.2)*|The shift value at which the step is activated.<br>Available values from 0 to 1. [example](https://codepen.io/StadnikEV/pen/Kooybm)
+|**slideElemClass**|**string**|Adding class to slide elements on the initialization<br>stage. This class will be add to slide elements which<br> was added to carousel through API.  [example](https://codepen.io/StadnikEV/pen/QmjLmr)
+|**movingElemClass**|**string**|Adding class to "movingElem" which was created<br> inside "container". [example](https://codepen.io/StadnikEV/pen/wmKwEy)
 |**onMoveEnd**|**function**|Event handler of ending moving. [example](https://codepen.io/StadnikEV/pen/pLjoeM)
 |**onSlideClick**|**function**|Event handler of mouse click on slide element.<br>This slide element passing to parameters of function.<br> [example](https://codepen.io/StadnikEV/pen/qoOBMP)
 
@@ -74,17 +82,26 @@ Slide-V  use your DOM structure:
 <br>
 
 # API
-<br>  
+
+ - [**next**](#next)
+ - [**prev**](#prev)
+ - [**goTo**](#goto)
+ - [**getState**](#getstate)
+ - [**prepend**](#prepend)
+ - [**append**](#append)
+ - [**insert**](#insert)
+ - [**remove**](#remove)
+ - [**destroy**](#destroy)
 
 ## next
 
     next ( { step: number, isAnimated = boolean, callback: function } )
 
-| parameter | type | default |
-|:--|:--:|:--:|
-| step | number | slidesInFrame |
-|isAnimated|boolean|true|
-|callback|function|-|
+| parameter | type | default |required parameter
+|:--|:--:|:--:|:--:|
+| step | number | slidesInFrame |no
+|isAnimated|boolean|true|no
+|callback|function|-|no
 
 **next()**  
 Moving slides one step to left. If carousel moved to the end position then carousel will not moving on at this direction. [example](https://codepen.io/StadnikEV/pen/rdOVLq)
@@ -102,11 +119,11 @@ On/off animation of moving. If animation is off then event "onMoveEnd" do not fi
 
     prev ( { step: number, isAnimated: boolean, callback: function } )
 
-| parameter | type | default |
-|:--|:--:|:--:|
-| step | number | slidesInFrame |
-|isAnimated|boolean|true|
-|callback|function|-|
+| parameter | type | default |required parameter
+|:--|:--:|:--:|:--:|
+| step | number | slidesInFrame |no
+|isAnimated|boolean|true|no
+|callback|function|-|no
 
 **prev()**  
 Moving slides one step to right. If carousel moved to the end position then carousel will not moving on at this direction. [example](https://codepen.io/StadnikEV/pen/rdOVLq)
@@ -123,14 +140,11 @@ On/off animation of moving. If animation is off then event "onMoveEnd" do not fi
 ## goTo
 
     goTo ( index: number, { isAnimated: boolean, callback: function }  )
-| parameter | type | default |
-|:--|:--:|:--:|
-| index | number | 0 |
-|isAnimated|boolean|true|
-|callback|function|-|
-
-**goTo()**  
-Moving carousel to position at a zero index. [example](https://codepen.io/StadnikEV/pen/MVabwV)
+| parameter | type | default |required parameter
+|:--|:--:|:--:|:--:|
+| index | number | 0 |no
+|isAnimated|boolean|true|no
+|callback|function|-|no
 
 **goTo(index)**  
 Moving carousel to position with specified "index". if "index" more/less of available value then carousel moving to end/start position. [example](https://codepen.io/StadnikEV/pen/wmGLdq)
@@ -155,15 +169,19 @@ Returns object with current position of the carousel. [example](https://codepen.
       numberSlidesAfterFrame: number
     }
 
+**NOTICE:** "getState"  does not returns "slide-v" object. Not use:
+
+    new SlideV().getState().next()
+
 
 ## prepend
 
     prepend( newElem, { callback: function } )
 
-| parameter | type | default |
-|:--|:--:|:--:|
-| newElem | DOM element |-|
-|callback|function|-|
+| parameter | type | default |required parameter
+|:--|:--:|:--:|:--:|
+| newElem | DOM element |-|yes
+|callback|function|-|no
 
 **prepend(newElem)**  
 Adding new element to beginning of carousel. This parameter is required. [example](https://codepen.io/StadnikEV/pen/MVKwMZ)
@@ -176,10 +194,10 @@ Adding new element to beginning of carousel. This parameter is required. [exampl
 
     append( newElem, { callback: function } )
 
-| parameter | type | default |
-|:--|:--:|:--:|
-| newElem | DOM element |-|
-|callback|function|-|
+| parameter | type | default |required parameter
+|:--|:--:|:--:|:--:|
+| newElem | DOM element |-|yes
+|callback|function|-|no
 
 
 **append(newElem)**  
@@ -193,11 +211,11 @@ Adding new element to end of carousel. This parameter is required. [example](htt
 
     insert( newElem, index, { callback: function } )
 
-| parameter | type | default |
-|:--|:--:|:--:|
-| newElem | DOM element | - |
-| index | number |-|
-| callback | function | - |
+| parameter | type | default |required parameter
+|:--|:--:|:--:|:--:|
+| newElem | DOM element | - |yes
+| index | number |-|yes
+| callback | function | - |no
 
 **insert(newElem, index)**  
 Adding new element before the element with specified "index". If element with specified "index" is not exist then new element will not add. Both parameter is required. [example](https://codepen.io/StadnikEV/pen/bvErRX)
@@ -210,10 +228,10 @@ Adding new element before the element with specified "index". If element with sp
 
     remove( index, { callback: function } )
 
-| parameter | type | default |
-|:--|:--:|:--:|
-| index | number |-|
-| callback | function | - |
+| parameter | type | default |required parameter
+|:--|:--:|:--:|:--:|
+| index | number |-| yes
+| callback | function | - |no
 
 **remove(index)**  
 Removing element with specified "index". This parameter is required. [example](https://codepen.io/StadnikEV/pen/KoVJoy)
@@ -225,10 +243,10 @@ Removing element with specified "index". This parameter is required. [example](h
 ## destroy
 
     destroy( { initialMarkup: boolean, callback: function } )
-| parameter | type | default |
-|:--|:--:|:--:|
-| initialMarkup | boolean |false|
-| callback | function | - |
+| parameter | type | default |required parameter
+|:--|:--:|:--:|:--:|
+| initialMarkup | boolean |false|no
+| callback | function | - |no
 
 **destroy()**  
 Removing all event listeners. After called "destroy" all methods of API will be not available. [example](https://codepen.io/StadnikEV/pen/MVKROe)

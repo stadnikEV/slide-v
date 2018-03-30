@@ -7,24 +7,23 @@ const next = document.querySelector('.next');
 const destroy = document.querySelector('.destroy');
 const prepend = document.querySelector('.prepend');
 
-const mySlideV = new SlideV();
 
-// const mySlideV = new SlideV({
-//   containerSelector: '.my-carousel',
-//   slidesInFrame: 3,
-//   step: 4,
-//   transitionDuration: 300,
-//   draggable: true,
-//   dragThreshold: 0.2,
-//   slideElemClass: 'slide',
-//   movingElemClass: 'moving-container',
-//   onMoveEnd: () => {
-//     console.log('onMoveEnd');
-//   },
-//   onSlideClick(slideElem) {
-//     console.log(slideElem);
-//   },
-// });
+const mySlideV = new SlideV({
+  containerSelector: '.slide-v',
+  slidesInFrame: 1,
+  step: 1,
+  transitionDuration: 701,
+  draggable: true,
+  dragThreshold: 1,
+  slideElemClass: 'slide',
+  movingElemClass: 'moving-container',
+  onMoveEnd: () => {
+    console.log('onMoveEnd');
+  },
+  onSlideClick(slideElem) {
+    console.log(slideElem);
+  },
+});
 
 const newElem = document.querySelector('.img');
 

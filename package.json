@@ -1,7 +1,7 @@
 {
   "name": "slide-v",
-  "version": "0.0.13",
-  "description": "Clasic carousel. In the carousel implemented buffer to call API. Not used frameworks, dependencies and external styles.",
+  "version": "0.1.2",
+  "description": "Slide-V provides basic functionality to easy using and opportunity adding new features through API. In the carousel implemented API buffer, drag & drop, adaptive structure. Not used frameworks, dependencies and external styles.",
   "main": "./dist/slide-v.min.js",
   "scripts": {
     "prod": "NODE_ENV=prod webpack",
@@ -13,7 +13,17 @@
     "url": "git+https://github.com/stadnikEV/slide-v.git"
   },
   "keywords": [
-    "сarousel"
+    "сarousel",
+    "slider",
+    "drag & drop",
+    "Drag'n'Drop",
+    "drag end drop",
+    "api",
+    "api buffer",
+    "no dependencies",
+    "no frameworks",
+    "no external styles",
+    "touch screen"
   ],
   "author": "Stadnik Eugene",
   "license": "ISC",
