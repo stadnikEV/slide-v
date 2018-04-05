@@ -13,13 +13,13 @@ html, body {
 }
 
 .slide {
-  /* padding: 100px 0; */
   color: white;
   background-color: rgb(101, 192, 149);
   text-align: center;
   font-size: 6rem;
   vertical-align: top;
 }
+
 
 .slide:nth-child(2n) {
   background: rgb(244, 144, 137);

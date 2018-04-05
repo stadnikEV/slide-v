@@ -23,7 +23,8 @@
     "no dependencies",
     "no frameworks",
     "no external styles",
-    "touch screen"
+    "touch screen",
+    "webpack"
   ],
   "author": "Stadnik Eugene",
   "license": "ISC",

@@ -14,7 +14,7 @@ const mySlideV = new SlideV({
   step: 1,
   transitionDuration: 701,
   draggable: true,
-  dragThreshold: 1,
+  dragThreshold: 0.2,
   slideElemClass: 'slide',
   movingElemClass: 'moving-container',
   onMoveEnd: () => {
@@ -28,7 +28,7 @@ const mySlideV = new SlideV({
 const newElem = document.querySelector('.img');
 
 next.addEventListener('click', () => {
-  mySlideV.next();
+  mySlideV.next({ callback: () => { console.log('next'); } });
 });
 prev.addEventListener('click', () => {
   mySlideV.prev();

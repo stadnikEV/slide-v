@@ -71,7 +71,7 @@ Slide-V  use your DOM structure:
 |**slidesInFrame**| **number**<br>*(1)* |Number of slides displayed in frame of "container".<br>[example](https://codepen.io/StadnikEV/pen/PRqMzM)  
 |**step**|**number**<br>*(slidesInFrame)*| Number of moving slides per one step. [example](https://codepen.io/StadnikEV/pen/mxebrE)
 |**transitionDuration**|**number**<br>*(300)*|Time at milliseconds during which carousel moving.<br>"TransitionDuration" it is "css" property. [example](https://codepen.io/StadnikEV/pen/yKYBXq)
-|**draggable**|**boolean**<br>*(true)*|Enable or disable "Drag'n'Drop" [example](https://codepen.io/StadnikEV/pen/pLWaML)
+|**draggable**|**boolean**<br>*(true)*|Enable or disable "Drag'n'Drop". [example](https://codepen.io/StadnikEV/pen/pLWaML)
 |**dragThreshold**|**number**<br>*(0.2)*|The shift value at which the step is activated.<br>Available values from 0 to 1. [example](https://codepen.io/StadnikEV/pen/Kooybm)
 |**slideElemClass**|**string**|Adding class to slide elements on the initialization<br>stage. This class will be add to slide elements which<br> was added to carousel through API.  [example](https://codepen.io/StadnikEV/pen/QmjLmr)
 |**movingElemClass**|**string**|Adding class to "movingElem" which was created<br> inside "container". [example](https://codepen.io/StadnikEV/pen/wmKwEy)
@@ -110,10 +110,10 @@ Moving slides one step to left. If carousel moved to the end position then carou
 Moving slides one step to left  with specified "step". [example](https://codepen.io/StadnikEV/pen/rdOOde)
 
 **next({ isAnimated: boolean })**  
-On/off animation of moving. If animation is off then event "onMoveEnd" do not fired. [example](https://codepen.io/StadnikEV/pen/jzbbpN)
+On/off animation of moving. If animation is off then event ["onMoveEnd"](https://codepen.io/StadnikEV/pen/pLjoeM) do not fired. [example](https://codepen.io/StadnikEV/pen/jzbbpN)
 
 **next({ callback: function })**  
-"Callback" function called asynchronously at the end of animation after event "onMoveEnd".  If "isAnimated = false" or carousel at the end position then "callback" function will be call in sync at the end of "next" method. [example](https://codepen.io/StadnikEV/pen/PRPPxX)
+"Callback" function called asynchronously at the end of animation after event ["onMoveEnd"](https://codepen.io/StadnikEV/pen/pLjoeM).  If "isAnimated = false" or carousel at the end position then "callback" function will be call in sync at the end of "next" method. [example](https://codepen.io/StadnikEV/pen/PRPPxX)
 
 ## prev
 
@@ -132,10 +132,10 @@ Moving slides one step to right. If carousel moved to the end position then caro
 Moving slides one step to right with specified "step". [example](https://codepen.io/StadnikEV/pen/rdOOde)
 
 **prev({ isAnimated: boolean })**  
-On/off animation of moving. If animation is off then event "onMoveEnd" do not fired. [example](https://codepen.io/StadnikEV/pen/jzbbpN)
+On/off animation of moving. If animation is off then event ["onMoveEnd"](https://codepen.io/StadnikEV/pen/pLjoeM) do not fired. [example](https://codepen.io/StadnikEV/pen/jzbbpN)
 
 **prev({ callback: function })**  
-"Callback" function called asynchronously at the end of animation after event "onMoveEnd".  If "isAnimated = false" or carousel at the end position then "callback" function will be call in sync at the end of "prev" method. [example](https://codepen.io/StadnikEV/pen/PRPPxX)
+"Callback" function called asynchronously at the end of animation after event ["onMoveEnd"](https://codepen.io/StadnikEV/pen/pLjoeM).  If "isAnimated = false" or carousel at the end position then "callback" function will be call in sync at the end of "prev" method. [example](https://codepen.io/StadnikEV/pen/PRPPxX)
 
 ## goTo
 
@@ -150,10 +150,10 @@ On/off animation of moving. If animation is off then event "onMoveEnd" do not fi
 Moving carousel to position with specified "index". if "index" more/less of available value then carousel moving to end/start position. [example](https://codepen.io/StadnikEV/pen/wmGLdq)
 
 **goTo({ isAnimated })**  
-On/off animation of moving. If animation is off then event "onMoveEnd" do not fired. [example](https://codepen.io/StadnikEV/pen/JLYbMP)
+On/off animation of moving. If animation is off then event ["onMoveEnd"](https://codepen.io/StadnikEV/pen/pLjoeM) do not fired. [example](https://codepen.io/StadnikEV/pen/JLYbMP)
 
 **goTo({ callback })**  
-"Callback" function called asynchronously at the end of animation after event "onMoveEnd".  If "isAnimated = false" or carousel at the end position then "callback" function will be call in sync at the end of "goTo" method. [example](https://codepen.io/StadnikEV/pen/rdOWQg)
+"Callback" function called asynchronously at the end of animation after event ["onMoveEnd"](https://codepen.io/StadnikEV/pen/pLjoeM).  If "isAnimated = false" or carousel at the end position then "callback" function will be call in sync at the end of "goTo" method. [example](https://codepen.io/StadnikEV/pen/rdOWQg)
 
 
 ## getState
@@ -169,7 +169,7 @@ Returns object with current position of the carousel. [example](https://codepen.
       numberSlidesAfterFrame: number
     }
 
-**NOTICE:** "getState"  does not returns "slide-v" object. Not use:
+**NOTICE:** "getState" does not returns "slide-v" object. Do not use "getState" for chaining:
 
     new SlideV().getState().next()
 
@@ -249,7 +249,7 @@ Removing element with specified "index". This parameter is required. [example](h
 | callback | function | - |no
 
 **destroy()**  
-Removing all event listeners. After called "destroy" all methods of API will be not available. [example](https://codepen.io/StadnikEV/pen/MVKROe)
+Removing all event listeners. After called "destroy" all methods of API (exception [getState](#getstate)) will be not available. [example](https://codepen.io/StadnikEV/pen/MVKROe)
 
 **destroy({ initialMarkup })**  
 Removing all event listeners and return "DOM structure" to initial state. [example](https://codepen.io/StadnikEV/pen/rdxgGv)

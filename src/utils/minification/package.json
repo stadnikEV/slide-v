@@ -1,0 +1,14 @@
+{
+  "name": "minification",
+  "version": "0.0.0",
+  "description": "minification",
+  "main": "./index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "minification"
+  ],
+  "author": "stadnik",
+  "license": "ISC"
+}

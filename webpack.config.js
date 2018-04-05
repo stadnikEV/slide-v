@@ -1,7 +1,7 @@
-
 const path = require('path');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+
 
 const NODE_ENV = process.env.NODE_ENV || 'prod';
 
@@ -42,7 +42,7 @@ if (NODE_ENV === 'dev') {
   module.exports.devtool = 'inline-cheap-module-source-map';
   module.exports.devServer = {
     inline: true,
-    port: 8080,
+    port: 3000,
     contentBase: 'dist/',
   };
   module.exports.plugins = [
@@ -54,14 +54,26 @@ if (NODE_ENV === 'dev') {
     test: /\.css$/,
     loaders: ['style-loader', 'css-loader'],
   });
+  module.exports.module.rules.push({
+    test: /slide-v.js$/,
+    exclude: /(node_modules|bower_components)/,
+    loaders: ['./src/utils/minification'],
+  });
 }
+
 
 if (NODE_ENV === 'prod') {
   module.exports.entry = './src/slide-v.js';
   module.exports.plugins = [
     new UglifyJsPlugin(),
   ];
+  module.exports.module.rules.push({
+    test: /slide-v.js$/,
+    exclude: /(node_modules|bower_components)/,
+    loaders: ['./src/utils/minification'],
+  });
 }
+
 
 if (NODE_ENV === 'test') {
   module.exports.entry = './test/test.js';
@@ -69,16 +81,22 @@ if (NODE_ENV === 'test') {
   module.exports.devtool = 'inline-cheap-module-source-map';
   module.exports.devServer = {
     inline: true,
-    port: 8080,
+    port: 3000,
     contentBase: 'dist/',
   };
   module.exports.plugins = [
     new HtmlWebpackPlugin({
       template: './test/index.html',
     }),
+    new UglifyJsPlugin(),
   ];
   module.exports.module.rules.push({
     test: /\.css$/,
     loaders: ['style-loader', 'css-loader'],
+  });
+  module.exports.module.rules.push({
+    test: /slide-v.js$/,
+    exclude: /(node_modules|bower_components)/,
+    loaders: ['./src/utils/minification'],
   });
 }

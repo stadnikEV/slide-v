@@ -12,6 +12,7 @@ export default function () {
       container.innerHTML = '<div>slide 0</div> <div>slide 1</div> <div>slide 2</div> <div>slide 3</div> <div>slide 4</div>';
       mySlideV = new SlideV({});
       chai.assert.equal(container.firstElementChild.children.length, 5);
+      container.innerHTML = '';
       done();
     });
 
