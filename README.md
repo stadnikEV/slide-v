@@ -1,15 +1,18 @@
 
 
+
 # Slide-V - classic carousel
 
 Slide-V provides basic functionality to easy using and opportunity adding new features through API. In the carousel implemented [API buffer](https://codepen.io/StadnikEV/pen/ZxQdXZ), drag & drop, [adaptive structure](https://codepen.io/StadnikEV/pen/bvEXVz). Not used frameworks, dependencies and external styles.
 
+**size: 4kb (gzip)**
 
  - [**Installing**](#installing)
  - [**Using**](#using)
  - [**Configuration**](#configuration)
  - [**API**](#api)
  - [**Features**](#features)
+ - [**Browser support**](#browser-support)
 
 
 # Installing
@@ -58,10 +61,10 @@ Slide-V  use your DOM structure:
 	    slidesInFrame: 1,
 	    step: slidesInFrame,
 	    transitionDuration: 300,
+	    transitionTiming: 'ease',
 	    draggable: true,
 	    dragThreshold: 0.2,
 	    slideElemClass: 'class-name',
-	    movingElemClass: 'class-name',
 	    onMoveEnd: () => {},
 	    onSlideClick: (slideElem) => {},
 	})
@@ -70,11 +73,11 @@ Slide-V  use your DOM structure:
 |**containerSelector**|**DOM element,**<br>or<br>**string**<br><br>*( '.slide-v' )*|Slide-v creating additional "movingElem" inside<br>the "container" and placing child elements of<br> "container" inside to "movingElem".<br><br>Default: [example](https://codepen.io/StadnikEV/pen/gevjep)<br>DOM element: [example](https://codepen.io/StadnikEV/pen/VXLNRo)<br>String: [example](https://codepen.io/StadnikEV/pen/pLjMyj)
 |**slidesInFrame**| **number**<br>*(1)* |Number of slides displayed in frame of "container".<br>[example](https://codepen.io/StadnikEV/pen/PRqMzM)  
 |**step**|**number**<br>*(slidesInFrame)*| Number of moving slides per one step. [example](https://codepen.io/StadnikEV/pen/mxebrE)
-|**transitionDuration**|**number**<br>*(300)*|Time at milliseconds during which carousel moving.<br>"TransitionDuration" it is "css" property. [example](https://codepen.io/StadnikEV/pen/yKYBXq)
+|**transitionDuration**|**number**<br>*(300)*|Time at milliseconds during which carousel moving.<br> [example](https://codepen.io/StadnikEV/pen/yKYBXq)
+|**transitionTiming**|**string**<br>('ease')|The transition-timing-function property specifies<br> the speed curve of the transition effect. [example](https://codepen.io/StadnikEV/pen/NYeyxZ)
 |**draggable**|**boolean**<br>*(true)*|Enable or disable "Drag'n'Drop". [example](https://codepen.io/StadnikEV/pen/pLWaML)
 |**dragThreshold**|**number**<br>*(0.2)*|The shift value at which the step is activated.<br>Available values from 0 to 1. [example](https://codepen.io/StadnikEV/pen/Kooybm)
 |**slideElemClass**|**string**|Adding class to slide elements on the initialization<br>stage. This class will be add to slide elements which<br> was added to carousel through API.  [example](https://codepen.io/StadnikEV/pen/QmjLmr)
-|**movingElemClass**|**string**|Adding class to "movingElem" which was created<br> inside "container". [example](https://codepen.io/StadnikEV/pen/wmKwEy)
 |**onMoveEnd**|**function**|Event handler of ending moving. [example](https://codepen.io/StadnikEV/pen/pLjoeM)
 |**onSlideClick**|**function**|Event handler of mouse click on slide element.<br>This slide element passing to parameters of function.<br> [example](https://codepen.io/StadnikEV/pen/qoOBMP)
 
@@ -258,6 +261,7 @@ Removing all event listeners and return "DOM structure" to initial state. [examp
 "Callback" function called in sync at the end of "destroy" method. [example](https://codepen.io/StadnikEV/pen/XEXwbV)
 <br><br>
 
+
 # Features
 
 **Buffer**
@@ -269,3 +273,7 @@ Removing all event listeners and return "DOM structure" to initial state. [examp
 **Dynamic adaptive structure**
 
 Follow the [link](https://codepen.io/StadnikEV/pen/bvEXVz) and change window width of browser.
+<br><br>
+
+# Browser support
+IE 9<br>Chrome 9<br>Safari 5.1<br>Opera 12<br>FireFox 6

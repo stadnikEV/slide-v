@@ -34,7 +34,8 @@ module.exports = {
           }
         ],
         "no-underscore-dangle": [
-          "error", {
+          "error",
+          {
             "allowAfterThis": true,
             "allow": ["_makeStep"]
           }

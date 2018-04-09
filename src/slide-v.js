@@ -3,6 +3,7 @@ import setDefaultPropertyOfConfig from './utils/set-default-property-of-config';
 import matchesPolyfill from './utils/matches-polyfill';
 import closestPolyfill from './utils/closest-polyfill';
 import mathSignPolyfill from './utils/math-sign-polyfil';
+import bindPolyfill from './utils/bind-polyfil';
 
 
 export default class SlideV {
@@ -15,13 +16,12 @@ export default class SlideV {
     this._config = setDefaultPropertyOfConfig(config);
 
     // полифилы
-
     mathSignPolyfill();
     matchesPolyfill(Element.prototype);
     closestPolyfill(Element.prototype);
+    bindPolyfill();
 
     // оборачиваем обработчики событий и сохраняем в пременные
-
     [
       '_onTransitionEnd',
       '_onResize',
@@ -71,11 +71,7 @@ export default class SlideV {
     this._movingElem = document.createElement('div');
     this._movingElem.style.position = 'relative';
     this._movingElem.style.left = '0';
-    this._movingElem.style.transitionProperty = 'left';
-    // добавить класс
-    if (this._config.movingElemClass) {
-      this._movingElem.classList.add(this._config.movingElemClass);
-    }
+
     if (this._config.draggable) {
       // это хак, но он работает))
       this._movingElem.style.cursor = '-webkit-grab';
@@ -261,14 +257,17 @@ export default class SlideV {
       this._inMovingProgress = false;
       this._movingElem.style.transition = '';
       this._movingElem.style.MozTransition = '';
-      this._movingElem.style.WebkitTransition = '';
+      this._movingElem.style.webkitTransition = '';
+      this._movingElem.style.OTransition = '';
       this._callbackHandler({ callback });
       this._callApiFromBuffer();
       return;
     }
-    this._movingElem.style.transition = `left ${this._config.transitionDuration}ms`;
-    this._movingElem.style.MozTransition = `left ${this._config.transitionDuration}ms`;
-    this._movingElem.style.WebkitTransition = `left ${this._config.transitionDuration}ms`;
+    const transition = `left ${this._config.transitionDuration}ms ${this._config.transitionTiming}`;
+    this._movingElem.style.transition = transition;
+    this._movingElem.style.MozTransition = transition;
+    this._movingElem.style.webkitTransition = transition;
+    this._movingElem.style.OTransition = transition;
     // сохраняет колбек в переменную для вызова в обработчике окончания css анимации onTransitionEnd
     this._callback = callback;
   }
@@ -421,6 +420,7 @@ export default class SlideV {
   _deactivation({ initialMarkup, callback } = {}) {
     this._isInit = false;
     this._buffer = [];
+    this._movingElem.style.cursor = '';
     this._eventUnsubscribe();
     if (initialMarkup) this._destoryDomStructure();
     this._callbackHandler({ callback });
@@ -460,6 +460,8 @@ export default class SlideV {
   _eventSubscribe() {
     window.addEventListener('resize', this._onResize);
     this._movingElem.addEventListener('transitionend', this._onTransitionEnd);
+    this._movingElem.addEventListener('webkitTransitionEnd', this._onTransitionEnd);
+    this._movingElem.addEventListener('oTransitionEnd', this._onTransitionEnd);
     this._containerElem.addEventListener('dragstart', this._onDragStart);
     this._movingElem.addEventListener('mousedown', this._onMouseDown);
     this._movingElem.addEventListener('touchstart', this._onTouchStart);
@@ -477,6 +479,8 @@ export default class SlideV {
   _eventUnsubscribe() {
     window.removeEventListener('resize', this._onResize);
     this._movingElem.removeEventListener('transitionend', this._onTransitionEnd);
+    this._movingElem.removeEventListener('webkitTransitionEnd', this._onTransitionEnd);
+    this._movingElem.removeEventListener('oTransitionEnd', this._onTransitionEnd);
     this._containerElem.removeEventListener('dragstart', this._onDragStart);
     this._movingElem.removeEventListener('mousedown', this._onMouseDown);
     this._movingElem.removeEventListener('touchstart', this._onTouchStart);
@@ -546,7 +550,8 @@ export default class SlideV {
 
     this._movingElem.style.transition = '';
     this._movingElem.style.MozTransition = '';
-    this._movingElem.style.WebkitTransition = '';
+    this._movingElem.style.webkitTransition = '';
+    this._movingElem.style.OTransition = '';
 
     // перемещение для начального положения
     if (this._position === 0 && dragdDirection === -1) {
@@ -628,10 +633,11 @@ export default class SlideV {
     // ускорение премещения при перетаскивании в зависимости от положения movingElem
     if (dropMethod === this.next || dropMethod === this.prev) {
       const progressDragCoefficient = this._getProgressDragCoefficient(curentPositionLeft);
-      const transition = `left ${this._config.transitionDuration - (this._config.transitionDuration * progressDragCoefficient)}ms`;
+      const transition = `left ${this._config.transitionDuration - (this._config.transitionDuration * progressDragCoefficient)}ms ${this._config.transitionTiming}`;
       this._movingElem.style.transition = transition;
       this._movingElem.style.MozTransition = transition;
-      this._movingElem.style.WebkitTransition = transition;
+      this._movingElem.style.webkitTransition = transition;
+      this._movingElem.style.OTransition = transition;
     }
   }
 
@@ -665,7 +671,8 @@ export default class SlideV {
     this._inMovingProgress = true;
     this._movingElem.style.transition = 'left 100ms';
     this._movingElem.style.MozTransition = 'left 100ms';
-    this._movingElem.style.WebkitTransition = 'left 100ms';
+    this._movingElem.style.webkitTransition = 'left 100ms';
+    this._movingElem.style.OTransition = 'left 100ms';
     this._movingElem.style.left = `${this._startDragPos}px`;
     // для анимации отмены drag&drop обработчик onTransitionEnd не должен вызываться
     this._movingElem.removeEventListener('transitionend', this._onTransitionEnd);
@@ -695,7 +702,8 @@ export default class SlideV {
     }
     this._movingElem.style.transition = '';
     this._movingElem.style.MozTransition = '';
-    this._movingElem.style.WebkitTransition = '';
+    this._movingElem.style.webkitTransition = '';
+    this._movingElem.style.OTransition = '';
     const slideWidth = parseFloat(getComputedStyle(this._movingElem.firstElementChild).width);
     this._movingElem.style.left = `${-this._position * slideWidth}px`;
   }
@@ -720,7 +728,8 @@ export default class SlideV {
     // перемещение в новое положение curentPositionLeft должно быть без анимации
     this._movingElem.style.transition = '';
     this._movingElem.style.MozTransition = '';
-    this._movingElem.style.WebkitTransition = '';
+    this._movingElem.style.webkitTransition = '';
+    this._movingElem.style.OTransition = '';
 
     // текущий коэфициент прогресса перемещения от startPositionLeft до endPositionLeft
     const progressMovingCoefficient = (endPositionLeft - curentPositionLeft) / (endPositionLeft - startPositionLeft);
@@ -729,9 +738,11 @@ export default class SlideV {
 
     this._timerResize = setTimeout(() => {
       // после корректировки положения movingElem, запускаем анимацию с новым значением transitionDuration и left
-      this._movingElem.style.transition = `left ${this._config.transitionDuration * progressMovingCoefficient}ms`;
-      this._movingElem.style.MozTransition = `left ${this._config.transitionDuration * progressMovingCoefficient}ms`;
-      this._movingElem.style.WebkitTransition = `left ${this._config.transitionDuration * progressMovingCoefficient}ms`;
+      const transition = `left ${this._config.transitionDuration * progressMovingCoefficient}ms ${this._config.transitionTiming}`;
+      this._movingElem.style.transition = transition;
+      this._movingElem.style.MozTransition = transition;
+      this._movingElem.style.webkitTransition = transition;
+      this._movingElem.style.OTransition = transition;
       this._movingElem.style.left = `${endPositionLeft}px`;
     }, 50);
   }
