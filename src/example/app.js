@@ -31,6 +31,7 @@ const mySlideV = new SlideV({
   transitionTiming: 'linear',
   draggable: true,
   dragThreshold: 0.2,
+  loop: true,
   slideElemClass: 'slide',
   onMoveEnd: () => {
     console.log('onMoveEnd');
@@ -42,7 +43,11 @@ const mySlideV = new SlideV({
 
 
 next.addEventListener('click', () => {
-  mySlideV.next();
+  mySlideV.next({
+    callback: (param) => {
+      console.log(param);
+    },
+  });
 });
 prev.addEventListener('click', () => {
   mySlideV.prev();
@@ -63,7 +68,11 @@ insert.addEventListener('click', () => {
   mySlideV.insert(insertElem, 1);
 });
 remove.addEventListener('click', () => {
-  mySlideV.remove(0);
+  mySlideV.remove(0, {
+    callback: (param) => {
+      console.log(param);
+    },
+  });
 });
 destroy.addEventListener('click', () => {
   mySlideV.destroy();

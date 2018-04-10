@@ -312,13 +312,14 @@ export default class SlideV {
   */
 
 
-  _callbackHandler({ callback }) {
+  _callbackHandler({ callback, parameter }) {
     if (typeof callback !== 'function') {
       return;
     }
     // вспомогательный, временный буфер. Необходим для помещения API из callback в основной буфер
     this._callbackBuffer = [];
-    callback();
+    // передает параметер в callback
+    callback(parameter);
     // добавление API методов из callback в основной буфер
     this._buffer = this._callbackBuffer.concat(this._buffer);
     this._callbackBuffer = null;
@@ -405,7 +406,10 @@ export default class SlideV {
     const removedElem = this._movingElem.removeChild(this._movingElem.children[index]);
     this._removeCssSlideElem(removedElem);
     this._setWidths();
-    this._callbackHandler({ callback });
+    this._callbackHandler({
+      callback,
+      parameter: removedElem,
+    });
     this._callApiFromBuffer();
   }
 

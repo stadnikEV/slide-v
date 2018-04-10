@@ -240,7 +240,7 @@ Adding new element before the element with specified "index". If element with sp
 Removing element with specified "index". This parameter is required. [example](https://codepen.io/StadnikEV/pen/KoVJoy)
 
 **remove(index, { callback: function })**  
-"Callback" function called in sync at the end of "remove" method. [example](https://codepen.io/StadnikEV/pen/zWreEJ)
+"Callback" function called in sync at the end of "remove" method. The removed element passing to parameters of callback function. [example](https://codepen.io/StadnikEV/pen/zWreEJ)
 
 
 ## destroy
