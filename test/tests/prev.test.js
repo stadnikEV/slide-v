@@ -7,7 +7,7 @@ export default function () {
   let mySlideV = null;
   let curentIsAnimated = false;
 
-  window.describe(`next({ step, isAnimated, callback }) - slides move to right. If "isAnimated: false" slides moving without animation.
+  window.describe(`prev({ step, isAnimated, callback }) - slides move to right. If "isAnimated: false" slides moving without animation.
   If "step" exceeds maximum available value, carousel move to available maximum
   position.`, () => {
     /*
@@ -29,9 +29,9 @@ export default function () {
       mySlideV.prev({
         step: -2,
         callback: () => {
-          const curentIndex = mySlideV.getState().curentSlideIndex;
+          const curentIndex = mySlideV.getState().currentSlideIndex;
           chai.assert.equal(curentIsAnimated, true, 'isAnimated not corresponds expected value');
-          chai.assert.equal(curentIndex, 2, 'curentSlideIndex not corresponds expected value');
+          chai.assert.equal(curentIndex, 2, 'currentSlideIndex not corresponds expected value');
           curentIsAnimated = false;
           done();
         },
@@ -40,9 +40,9 @@ export default function () {
     window.it('prev()', (done) => {
       mySlideV.prev({
         callback: () => {
-          const curentIndex = mySlideV.getState().curentSlideIndex;
+          const curentIndex = mySlideV.getState().currentSlideIndex;
           chai.assert.equal(curentIsAnimated, true, 'isAnimated not corresponds expected value');
-          chai.assert.equal(curentIndex, 1, 'curentSlideIndex not corresponds expected value');
+          chai.assert.equal(curentIndex, 1, 'currentSlideIndex not corresponds expected value');
           curentIsAnimated = false;
           done();
         },
@@ -51,9 +51,9 @@ export default function () {
     window.it('prev()', (done) => {
       mySlideV.prev({
         callback: () => {
-          const curentIndex = mySlideV.getState().curentSlideIndex;
+          const curentIndex = mySlideV.getState().currentSlideIndex;
           chai.assert.equal(curentIsAnimated, true, 'isAnimated not corresponds expected value');
-          chai.assert.equal(curentIndex, 0, 'curentSlideIndex not corresponds expected value');
+          chai.assert.equal(curentIndex, 0, 'currentSlideIndex not corresponds expected value');
           curentIsAnimated = false;
           done();
         },
@@ -62,9 +62,9 @@ export default function () {
     window.it('prev()', (done) => {
       mySlideV.prev({
         callback: () => {
-          const curentIndex = mySlideV.getState().curentSlideIndex;
+          const curentIndex = mySlideV.getState().currentSlideIndex;
           chai.assert.equal(curentIsAnimated, false, 'isAnimated not corresponds expected value');
-          chai.assert.equal(curentIndex, 0, 'curentSlideIndex not corresponds expected value');
+          chai.assert.equal(curentIndex, 0, 'currentSlideIndex not corresponds expected value');
           curentIsAnimated = false;
           done();
         },
@@ -74,9 +74,9 @@ export default function () {
       mySlideV.prev({
         step: -2,
         callback: () => {
-          const curentIndex = mySlideV.getState().curentSlideIndex;
+          const curentIndex = mySlideV.getState().currentSlideIndex;
           chai.assert.equal(curentIsAnimated, true, 'isAnimated not corresponds expected value');
-          chai.assert.equal(curentIndex, 2, 'curentSlideIndex not corresponds expected value');
+          chai.assert.equal(curentIndex, 2, 'currentSlideIndex not corresponds expected value');
           curentIsAnimated = false;
           done();
         },
@@ -86,9 +86,9 @@ export default function () {
       mySlideV.prev({
         step: 2,
         callback: () => {
-          const curentIndex = mySlideV.getState().curentSlideIndex;
+          const curentIndex = mySlideV.getState().currentSlideIndex;
           chai.assert.equal(curentIsAnimated, true, 'isAnimated not corresponds expected value');
-          chai.assert.equal(curentIndex, 0, 'curentSlideIndex not corresponds expected value');
+          chai.assert.equal(curentIndex, 0, 'currentSlideIndex not corresponds expected value');
           curentIsAnimated = false;
           done();
         },
@@ -99,9 +99,9 @@ export default function () {
         step: -3,
         isAnimated: false,
         callback: () => {
-          const curentIndex = mySlideV.getState().curentSlideIndex;
+          const curentIndex = mySlideV.getState().currentSlideIndex;
           chai.assert.equal(curentIsAnimated, false, 'isAnimated not corresponds expected value');
-          chai.assert.equal(curentIndex, 2, 'curentSlideIndex not corresponds expected value');
+          chai.assert.equal(curentIndex, 2, 'currentSlideIndex not corresponds expected value');
           curentIsAnimated = false;
           done();
         },
@@ -112,9 +112,9 @@ export default function () {
         step: 3,
         isAnimated: false,
         callback: () => {
-          const curentIndex = mySlideV.getState().curentSlideIndex;
+          const curentIndex = mySlideV.getState().currentSlideIndex;
           chai.assert.equal(curentIsAnimated, false, 'isAnimated not corresponds expected value');
-          chai.assert.equal(curentIndex, 0, 'curentSlideIndex not corresponds expected value');
+          chai.assert.equal(curentIndex, 0, 'currentSlideIndex not corresponds expected value');
           curentIsAnimated = false;
           done();
         },
@@ -141,9 +141,9 @@ export default function () {
       mySlideV.prev({
         step: -3,
         callback: () => {
-          const curentIndex = mySlideV.getState().curentSlideIndex;
+          const curentIndex = mySlideV.getState().currentSlideIndex;
           chai.assert.equal(curentIsAnimated, true, 'isAnimated not corresponds expected value');
-          chai.assert.equal(curentIndex, 3, 'curentSlideIndex not corresponds expected value');
+          chai.assert.equal(curentIndex, 3, 'currentSlideIndex not corresponds expected value');
           curentIsAnimated = false;
           done();
         },
@@ -152,9 +152,9 @@ export default function () {
     window.it('prev()', (done) => {
       mySlideV.prev({
         callback: () => {
-          const curentIndex = mySlideV.getState().curentSlideIndex;
+          const curentIndex = mySlideV.getState().currentSlideIndex;
           chai.assert.equal(curentIsAnimated, true, 'isAnimated not corresponds expected value');
-          chai.assert.equal(curentIndex, 1, 'curentSlideIndex not corresponds expected value');
+          chai.assert.equal(curentIndex, 1, 'currentSlideIndex not corresponds expected value');
           curentIsAnimated = false;
           done();
         },
@@ -163,9 +163,9 @@ export default function () {
     window.it('prev()', (done) => {
       mySlideV.prev({
         callback: () => {
-          const curentIndex = mySlideV.getState().curentSlideIndex;
+          const curentIndex = mySlideV.getState().currentSlideIndex;
           chai.assert.equal(curentIsAnimated, true, 'isAnimated not corresponds expected value');
-          chai.assert.equal(curentIndex, 0, 'curentSlideIndex not corresponds expected value');
+          chai.assert.equal(curentIndex, 0, 'currentSlideIndex not corresponds expected value');
           curentIsAnimated = false;
           done();
         },
@@ -174,9 +174,9 @@ export default function () {
     window.it('prev()', (done) => {
       mySlideV.prev({
         callback: () => {
-          const curentIndex = mySlideV.getState().curentSlideIndex;
+          const curentIndex = mySlideV.getState().currentSlideIndex;
           chai.assert.equal(curentIsAnimated, false, 'isAnimated not corresponds expected value');
-          chai.assert.equal(curentIndex, 0, 'curentSlideIndex not corresponds expected value');
+          chai.assert.equal(curentIndex, 0, 'currentSlideIndex not corresponds expected value');
           curentIsAnimated = false;
           done();
         },
@@ -186,9 +186,9 @@ export default function () {
       mySlideV.prev({
         step: -3,
         callback: () => {
-          const curentIndex = mySlideV.getState().curentSlideIndex;
+          const curentIndex = mySlideV.getState().currentSlideIndex;
           chai.assert.equal(curentIsAnimated, true, 'isAnimated not corresponds expected value');
-          chai.assert.equal(curentIndex, 3, 'curentSlideIndex not corresponds expected value');
+          chai.assert.equal(curentIndex, 3, 'currentSlideIndex not corresponds expected value');
           curentIsAnimated = false;
           done();
         },
@@ -198,9 +198,9 @@ export default function () {
       mySlideV.prev({
         step: 1,
         callback: () => {
-          const curentIndex = mySlideV.getState().curentSlideIndex;
+          const curentIndex = mySlideV.getState().currentSlideIndex;
           chai.assert.equal(curentIsAnimated, true, 'isAnimated not corresponds expected value');
-          chai.assert.equal(curentIndex, 2, 'curentSlideIndex not corresponds expected value');
+          chai.assert.equal(curentIndex, 2, 'currentSlideIndex not corresponds expected value');
           curentIsAnimated = false;
           done();
         },
@@ -210,9 +210,9 @@ export default function () {
       mySlideV.prev({
         step: 3,
         callback: () => {
-          const curentIndex = mySlideV.getState().curentSlideIndex;
+          const curentIndex = mySlideV.getState().currentSlideIndex;
           chai.assert.equal(curentIsAnimated, true, 'isAnimated not corresponds expected value');
-          chai.assert.equal(curentIndex, 0, 'curentSlideIndex not corresponds expected value');
+          chai.assert.equal(curentIndex, 0, 'currentSlideIndex not corresponds expected value');
           curentIsAnimated = false;
           done();
         },
@@ -223,9 +223,9 @@ export default function () {
         step: -3,
         isAnimated: false,
         callback: () => {
-          const curentIndex = mySlideV.getState().curentSlideIndex;
+          const curentIndex = mySlideV.getState().currentSlideIndex;
           chai.assert.equal(curentIsAnimated, false, 'isAnimated not corresponds expected value');
-          chai.assert.equal(curentIndex, 3, 'curentSlideIndex not corresponds expected value');
+          chai.assert.equal(curentIndex, 3, 'currentSlideIndex not corresponds expected value');
           curentIsAnimated = false;
           done();
         },
@@ -236,9 +236,9 @@ export default function () {
         step: 4,
         isAnimated: false,
         callback: () => {
-          const curentIndex = mySlideV.getState().curentSlideIndex;
+          const curentIndex = mySlideV.getState().currentSlideIndex;
           chai.assert.equal(curentIsAnimated, false, 'isAnimated not corresponds expected value');
-          chai.assert.equal(curentIndex, 0, 'curentSlideIndex not corresponds expected value');
+          chai.assert.equal(curentIndex, 0, 'currentSlideIndex not corresponds expected value');
           curentIsAnimated = false;
           done();
         },

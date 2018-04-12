@@ -73,10 +73,7 @@ export default class SlideV {
     this._movingElem.style.left = '0';
 
     if (this._config.draggable) {
-      // это хак, но он работает))
-      this._movingElem.style.cursor = '-webkit-grab';
-      this._movingElem.style.cursor = '-moz-grab';
-      this._movingElem.style.cursor = 'grab';
+      this._setCursorGrab();
     }
     // поместить дочерние элементы из containerElem в movingElem
     for (let i = 0; i < this._numberOfSlides; i += 1) {
@@ -84,11 +81,20 @@ export default class SlideV {
       this._setCssSlideElem(slideElem);
       this._movingElem.appendChild(slideElem);
     }
+
     // задать ширину элементам
     this._setWidths();
     // удаляет текстовые узлы
     this._containerElem.innerHTML = '';
     this._containerElem.appendChild(this._movingElem);
+
+    // если включено зацикливание, перемещаем последние слайды с конца в начало
+    if (this._config.loop) {
+      if (this._numberOfSlides - this._config.slidesInFrame < 2) {
+        console.warn(`Side-v error: "loop" - for looping need to increase the number of slides by ${2 - (this._numberOfSlides - this._config.slidesInFrame)}`);
+      }
+      this._relocateSlides({ step: -this._config.step });
+    }
   }
 
   _setCssSlideElem(slideElem) {
@@ -108,6 +114,13 @@ export default class SlideV {
     }
   }
 
+  _setCursorGrab() {
+    // это хак, но он работает))
+    this._movingElem.style.cursor = '-webkit-grab';
+    this._movingElem.style.cursor = '-moz-grab';
+    this._movingElem.style.cursor = 'grab';
+  }
+
 
   /*
   *
@@ -118,7 +131,7 @@ export default class SlideV {
 
   getState() {
     return {
-      curentSlideIndex: this._position,
+      currentSlideIndex: this._position,
       numberSlidesAfterFrame: this._numberSlidesAfterFrame,
       lastSlideIndex: this._numberOfSlides - 1,
     };
@@ -232,16 +245,14 @@ export default class SlideV {
 
   _takeStep({ step, isAnimated = true, callback }) {
     this._inMovingProgress = true;
-
+    // устраняет дребезг курсора
     if (this._config.draggable && this._config.transitionDuration > 700) {
       this._movingElem.style.cursor = '';
-      this._movingElem.style.cursor = '';
-      this._movingElem.style.cursor = '';
     }
-    // Проверить был ли посчитан this._curentStep в другом методе
-    this._curentStep = this._getCurentStep(step);
 
-    if (this._curentStep === 0) {
+    this._currentStep = this._getCurrentStep(step);
+
+    if (this._currentStep === 0) {
       this._inMovingProgress = false;
       this._callbackHandler({ callback });
       this._callApiFromBuffer();
@@ -250,8 +261,8 @@ export default class SlideV {
 
     this._movingElem.style.left = `${this._getNextPositionLeft()}px`;
 
-    this._position += this._curentStep;
-    this._numberSlidesAfterFrame += -this._curentStep;
+    this._position += this._currentStep;
+    this._numberSlidesAfterFrame += -this._currentStep;
 
     if (!isAnimated) {
       this._inMovingProgress = false;
@@ -259,6 +270,9 @@ export default class SlideV {
       this._movingElem.style.MozTransition = '';
       this._movingElem.style.webkitTransition = '';
       this._movingElem.style.OTransition = '';
+      if (this._config.loop) {
+        this._relocateSlides({ step: this._currentStep });
+      }
       this._callbackHandler({ callback });
       this._callApiFromBuffer();
       return;
@@ -272,7 +286,7 @@ export default class SlideV {
     this._callback = callback;
   }
 
-  _getCurentStep(step) {
+  _getCurrentStep(step) {
     // доступное количество слайдов для перемещения
     const availableStep = (Math.sign(step) === 1)
       ? this._numberSlidesAfterFrame
@@ -284,23 +298,89 @@ export default class SlideV {
 
   _getNextPositionLeft() {
     // clientWidth и offsetWidth не точно измеряют. Накапливается ошибка.
-    const curentSlideWidth = parseFloat(getComputedStyle(this._movingElem.firstElementChild).width);
+    const currentSlideWidth = parseFloat(getComputedStyle(this._movingElem.firstElementChild).width);
     // необходимо для onResize
-    this._lastSlideWidth = curentSlideWidth;
-    return -(this._position + this._curentStep) * curentSlideWidth;
+    this._lastSlideWidth = currentSlideWidth;
+    return -(this._position + this._currentStep) * currentSlideWidth;
   }
 
 
   // Обработчик события окончания css анимации
   _onTransitionEnd() {
     this._inMovingProgress = false;
-    if (this._config.draggable && this._config.transitionDuration > 700) {
-      this._movingElem.style.cursor = '-webkit-grab';
-      this._movingElem.style.cursor = '-moz-grab';
-      this._movingElem.style.cursor = 'grab';
+
+    if (this._config.loop) {
+      this._relocateSlides({ step: this._currentStep });
     }
+
+    if (this._config.draggable && this._config.transitionDuration > 700) {
+      this._setCursorGrab();
+    }
+
     this._config.onMoveEnd();
     this._callbackHandler({ callback: this._callback });
+    this._callApiFromBuffer();
+  }
+
+
+  /*
+  *
+  *    Infinity Loop
+  *
+  */
+
+
+  // перебрасывает слайды слева-направо и наоборот
+  _relocateSlides({ step }) {
+    const direction = Math.sign(step);
+
+    // количество доступных шагов без учета переносимых слайдов
+    const availableStep = (direction === 1)
+      ? this._numberSlidesAfterFrame
+      : this._position;
+
+    if (availableStep >= this._config.step) {
+      return;
+    }
+    // отключить loop, необходимо что бы не срабатывал метод _relocateSlides() внутри метода this._takeStep
+    this._config.loop = false;
+
+    // количество доступных сдайдов для переноса (с обеих сторон от кадра должно быть одинаковое количество слайдов)
+    const availableSlides = (direction === 1)
+      ? Math.floor(this._position / 2)
+      : Math.floor(this._numberSlidesAfterFrame / 2);
+
+    // количество перебрасываемых слайдов
+    const numbersOfRelocatedSlides = (this._config.step <= availableSlides)
+      ? this._config.step
+      : availableSlides;
+
+    // вспомогательный буфер, нужен для помещения методов в основной буфер
+    const tempBuffer = [];
+
+    if (direction === 1) {
+      for (let i = 0; i < numbersOfRelocatedSlides; i += 1) {
+        const slideElem = this._movingElem.children[i];
+        tempBuffer.push(this._insertAppend.bind(this, { slideElem }));
+        tempBuffer.push(this._takeStep.bind(this, { step: -1, isAnimated: false }));
+      }
+    }
+
+    if (direction === -1) {
+      for (let i = 0; i < numbersOfRelocatedSlides; i += 1) {
+        const slideElem = this._movingElem.children[this._numberOfSlides - 1 - i];
+        tempBuffer.push(this._insertPrepend.bind(this, { slideElem }));
+        tempBuffer.push(this._takeStep.bind(this, { step: 1, isAnimated: false }));
+      }
+    }
+    // возвращает Loop в исходное состояние(true). Так же эта функция нужна что бы не вызывался следующий метод из основного буфера...
+    // метод this._takeStep вызывает вконце следующий метод из основного буфера(в последнем методе this._takeStep вызовется фенкция setLoopTrue)...
+    const setLoopTrue = () => {
+      this._config.loop = true;
+    };
+    tempBuffer.push(setLoopTrue.bind(this));
+    // добавление методов из tempBuffer в основной буфер
+    this._buffer = tempBuffer.concat(this._buffer);
     this._callApiFromBuffer();
   }
 
@@ -545,10 +625,10 @@ export default class SlideV {
 
     const dragdDirection = Math.sign(this._dragShift);
 
-    // не пересчитывать this._curentStep и this._nextPositionLeft для каждого события
+    // не пересчитывать this._currentStep и this._nextPositionLeft для каждого события
     if (this._dragdDirection !== dragdDirection) {
       this._dragdDirection = dragdDirection;
-      this._curentStep = this._getCurentStep(dragdDirection * this._config.step);
+      this._currentStep = this._getCurrentStep(dragdDirection * this._config.step);
       this._nextPositionLeft = this._getNextPositionLeft();
     }
 
@@ -568,7 +648,7 @@ export default class SlideV {
       return;
     }
     // перемещение между начальным и конечным положениями
-    const dragShiftCoefficient = Math.abs(this._curentStep / this._config.slidesInFrame);
+    const dragShiftCoefficient = Math.abs(this._currentStep / this._config.slidesInFrame);
     this._movingElem.style.left = `${this._startDragPos - (this._dragShift * dragShiftCoefficient)}px`;
 
     // ограничение перемещения если слайд находится в ожидаемом положении
@@ -586,9 +666,7 @@ export default class SlideV {
     if (!this._isMouseDown) return;
     this._isMouseDown = false;
     if (this._config.draggable) {
-      this._movingElem.style.cursor = '-webkit-grab';
-      this._movingElem.style.cursor = '-moz-grab';
-      this._movingElem.style.cursor = 'grab';
+      this._setCursorGrab();
     }
     this._dragEnd(event.target);
   }
@@ -603,9 +681,7 @@ export default class SlideV {
     if (!this._isMouseDown) return;
     this._isMouseDown = false;
     if (this._config.draggable) {
-      this._movingElem.style.cursor = '-webkit-grab';
-      this._movingElem.style.cursor = '-moz-grab';
-      this._movingElem.style.cursor = 'grab';
+      this._setCursorGrab();
     }
     this._dragEnd(event.target);
   }
@@ -628,7 +704,7 @@ export default class SlideV {
 
   // движение при бросании
   _dropMoving() {
-    const curentPositionLeft = parseFloat(this._movingElem.style.left);
+    const currentPositionLeft = parseFloat(this._movingElem.style.left);
     // получить метод движения для завершения drag&drop
     const dropMethod = this._getDropMethod();
     dropMethod.call(this);
@@ -636,7 +712,7 @@ export default class SlideV {
 
     // ускорение премещения при перетаскивании в зависимости от положения movingElem
     if (dropMethod === this.next || dropMethod === this.prev) {
-      const progressDragCoefficient = this._getProgressDragCoefficient(curentPositionLeft);
+      const progressDragCoefficient = this._getProgressDragCoefficient(currentPositionLeft);
       const transition = `left ${this._config.transitionDuration - (this._config.transitionDuration * progressDragCoefficient)}ms ${this._config.transitionTiming}`;
       this._movingElem.style.transition = transition;
       this._movingElem.style.MozTransition = transition;
@@ -663,10 +739,10 @@ export default class SlideV {
 
 
   // коефицеинт премещения при перетаскивании (0 -> 1)
-  _getProgressDragCoefficient(curentPositionLeft) {
+  _getProgressDragCoefficient(currentPositionLeft) {
     const endPositionLeft = this._nextPositionLeft;
-    const startPositionLeft = endPositionLeft + (this._curentStep * this._lastSlideWidth);
-    return (curentPositionLeft - startPositionLeft) / (endPositionLeft - startPositionLeft);
+    const startPositionLeft = endPositionLeft + (this._currentStep * this._lastSlideWidth);
+    return (currentPositionLeft - startPositionLeft) / (endPositionLeft - startPositionLeft);
   }
 
 
@@ -721,22 +797,22 @@ export default class SlideV {
     // насколько изменилась ширина слайда по сравнению с последним событием onResize
     const slideWidthCoefficient = slideWidth / this._lastSlideWidth;
     // позиция с которой перемещается movingElem
-    const startPositionLeft = endPositionLeft + (this._curentStep * slideWidth);
+    const startPositionLeft = endPositionLeft + (this._currentStep * slideWidth);
     // текущая позиция movingElem
-    let curentPositionLeft = parseFloat(getComputedStyle(this._movingElem).left);
+    let currentPositionLeft = parseFloat(getComputedStyle(this._movingElem).left);
     // требуемая текущая позиция movingElem c с учетом изменения ширины слайда
-    curentPositionLeft *= slideWidthCoefficient;
+    currentPositionLeft *= slideWidthCoefficient;
 
     // изменение текущего положения movingElem с учетом изменения ширины слайда
-    this._movingElem.style.left = `${curentPositionLeft}px`;
-    // перемещение в новое положение curentPositionLeft должно быть без анимации
+    this._movingElem.style.left = `${currentPositionLeft}px`;
+    // перемещение в новое положение currentPositionLeft должно быть без анимации
     this._movingElem.style.transition = '';
     this._movingElem.style.MozTransition = '';
     this._movingElem.style.webkitTransition = '';
     this._movingElem.style.OTransition = '';
 
     // текущий коэфициент прогресса перемещения от startPositionLeft до endPositionLeft
-    const progressMovingCoefficient = (endPositionLeft - curentPositionLeft) / (endPositionLeft - startPositionLeft);
+    const progressMovingCoefficient = (endPositionLeft - currentPositionLeft) / (endPositionLeft - startPositionLeft);
     this._lastSlideWidth = slideWidth;
     clearTimeout(this._timerResize); // выполнить только последний setTimeout
 

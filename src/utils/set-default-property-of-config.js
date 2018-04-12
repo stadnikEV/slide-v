@@ -19,5 +19,7 @@ export default function setDefaultPropertyOfConfig(config) {
     ? 0
     : config.dragThreshold || 0.2;
 
+  config.loop = config.loop || false;
+
   return config;
 }

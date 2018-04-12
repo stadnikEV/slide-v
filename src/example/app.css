@@ -6,7 +6,6 @@ html, body {
 .slide-v {
   width: 50%;
   margin: 0 auto;
-  background-color: lightgray;
   -webkit-user-select: none;
   -moz-user-select: none;
   user-select: none;

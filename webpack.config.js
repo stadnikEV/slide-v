@@ -54,11 +54,11 @@ if (NODE_ENV === 'dev') {
     test: /\.css$/,
     loaders: ['style-loader', 'css-loader'],
   });
-  module.exports.module.rules.push({
-    test: /slide-v.js$/,
-    exclude: /(node_modules|bower_components)/,
-    loaders: ['./src/utils/minification'],
-  });
+  // module.exports.module.rules.push({
+  //   test: /slide-v.js$/,
+  //   exclude: /(node_modules|bower_components)/,
+  //   loaders: ['./src/utils/minification'],
+  // });
 }
 
 

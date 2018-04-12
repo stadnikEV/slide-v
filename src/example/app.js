@@ -25,13 +25,13 @@ insertElem.innerHTML = 'insert';
 
 
 const mySlideV = new SlideV({
-  slidesInFrame: 3,
-  step: 3,
+  slidesInFrame: 2,
+  step: 2,
   transitionDuration: 300,
   transitionTiming: 'linear',
   draggable: true,
   dragThreshold: 0.2,
-  loop: true,
+  // loop: true,
   slideElemClass: 'slide',
   onMoveEnd: () => {
     console.log('onMoveEnd');
@@ -43,11 +43,7 @@ const mySlideV = new SlideV({
 
 
 next.addEventListener('click', () => {
-  mySlideV.next({
-    callback: (param) => {
-      console.log(param);
-    },
-  });
+  mySlideV.next();
 });
 prev.addEventListener('click', () => {
   mySlideV.prev();

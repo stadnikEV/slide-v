@@ -17,21 +17,21 @@ export default function () {
       mySlideV.next({
         step: 4,
         callback: () => {
-          sequence.push(mySlideV.getState().curentSlideIndex);
+          sequence.push(mySlideV.getState().currentSlideIndex);
         },
       });
       mySlideV.prev({
         step: 2,
         callback: () => {
-          sequence.push(mySlideV.getState().curentSlideIndex);
+          sequence.push(mySlideV.getState().currentSlideIndex);
           mySlideV.next({
             step: 1,
             callback: () => {
-              sequence.push(mySlideV.getState().curentSlideIndex);
+              sequence.push(mySlideV.getState().currentSlideIndex);
               mySlideV.next({
                 step: 1,
                 callback: () => {
-                  sequence.push(mySlideV.getState().curentSlideIndex);
+                  sequence.push(mySlideV.getState().currentSlideIndex);
                 },
               });
             },
@@ -39,7 +39,7 @@ export default function () {
           mySlideV.prev({
             step: 4,
             callback: () => {
-              sequence.push(mySlideV.getState().curentSlideIndex);
+              sequence.push(mySlideV.getState().currentSlideIndex);
             },
           });
         },
@@ -47,11 +47,11 @@ export default function () {
       mySlideV.next({
         step: 3,
         callback: () => {
-          sequence.push(mySlideV.getState().curentSlideIndex);
+          sequence.push(mySlideV.getState().currentSlideIndex);
           mySlideV.prev({
             step: 3,
             callback: () => {
-              sequence.push(mySlideV.getState().curentSlideIndex);
+              sequence.push(mySlideV.getState().currentSlideIndex);
             },
           });
         },
@@ -59,7 +59,7 @@ export default function () {
       mySlideV.next({
         step: 1,
         callback: () => {
-          sequence.push(mySlideV.getState().curentSlideIndex);
+          sequence.push(mySlideV.getState().currentSlideIndex);
           chai.assert.deepEqual(sequence, [4, 2, 3, 4, 0, 3, 0, 1]);
           done();
         },

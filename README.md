@@ -167,7 +167,7 @@ On/off animation of moving. If animation is off then event ["onMoveEnd"](https:/
 Returns object with current position of the carousel. [example](https://codepen.io/StadnikEV/pen/qoOqeZ)
 
     Object {
-      curentSlideIndex: number,
+      currentSlideIndex: number,
       lastSlideIndex: number,
       numberSlidesAfterFrame: number
     }
