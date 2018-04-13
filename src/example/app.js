@@ -31,7 +31,7 @@ const mySlideV = new SlideV({
   transitionTiming: 'linear',
   draggable: true,
   dragThreshold: 0.2,
-  // loop: true,
+  loop: true,
   slideElemClass: 'slide',
   onMoveEnd: () => {
     console.log('onMoveEnd');
@@ -74,6 +74,11 @@ destroy.addEventListener('click', () => {
   mySlideV.destroy();
 });
 
+const a = mySlideV.getState().curentSlideIndex;
+
+if (a > 1) {
+  console.log(1);
+}
 
 // mySlideV.next({ step: 2, isAnimated: false, callback: () => { mySlideV.next(); } });
 // mySlideV.prev();

@@ -116,7 +116,7 @@ Moving slides one step to left  with specified "step". [example](https://codepen
 On/off animation of moving. If animation is off then event ["onMoveEnd"](https://codepen.io/StadnikEV/pen/pLjoeM) do not fired. [example](https://codepen.io/StadnikEV/pen/jzbbpN)
 
 **next({ callback: function })**  
-"Callback" function called asynchronously at the end of animation after event ["onMoveEnd"](https://codepen.io/StadnikEV/pen/pLjoeM).  If "isAnimated = false" or carousel at the end position then "callback" function will be call in sync at the end of "next" method. [example](https://codepen.io/StadnikEV/pen/PRPPxX)
+"Callback" function called asynchronously at the end of animation after event ["onMoveEnd"](https://codepen.io/StadnikEV/pen/pLjoeM).  If "isAnimated = false" or carousel at the end position then "callback" function will be call in sync at the end of "next" API method. [example](https://codepen.io/StadnikEV/pen/PRPPxX)
 
 ## prev
 
@@ -138,7 +138,7 @@ Moving slides one step to right with specified "step". [example](https://codepen
 On/off animation of moving. If animation is off then event ["onMoveEnd"](https://codepen.io/StadnikEV/pen/pLjoeM) do not fired. [example](https://codepen.io/StadnikEV/pen/jzbbpN)
 
 **prev({ callback: function })**  
-"Callback" function called asynchronously at the end of animation after event ["onMoveEnd"](https://codepen.io/StadnikEV/pen/pLjoeM).  If "isAnimated = false" or carousel at the end position then "callback" function will be call in sync at the end of "prev" method. [example](https://codepen.io/StadnikEV/pen/PRPPxX)
+"Callback" function called asynchronously at the end of animation after event ["onMoveEnd"](https://codepen.io/StadnikEV/pen/pLjoeM).  If "isAnimated = false" or carousel at the end position then "callback" function will be call in sync at the end of "prev" API method. [example](https://codepen.io/StadnikEV/pen/PRPPxX)
 
 ## goTo
 
@@ -156,7 +156,7 @@ Moving carousel to position with specified "index". if "index" more/less of avai
 On/off animation of moving. If animation is off then event ["onMoveEnd"](https://codepen.io/StadnikEV/pen/pLjoeM) do not fired. [example](https://codepen.io/StadnikEV/pen/JLYbMP)
 
 **goTo({ callback })**  
-"Callback" function called asynchronously at the end of animation after event ["onMoveEnd"](https://codepen.io/StadnikEV/pen/pLjoeM).  If "isAnimated = false" or carousel at the end position then "callback" function will be call in sync at the end of "goTo" method. [example](https://codepen.io/StadnikEV/pen/rdOWQg)
+"Callback" function called asynchronously at the end of animation after event ["onMoveEnd"](https://codepen.io/StadnikEV/pen/pLjoeM).  If "isAnimated = false" or carousel at the end position then "callback" function will be call in sync at the end of "goTo" API method. [example](https://codepen.io/StadnikEV/pen/rdOWQg)
 
 
 ## getState

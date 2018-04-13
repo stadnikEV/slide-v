@@ -23,7 +23,3 @@ html, body {
 .slide:nth-child(2n) {
   background: rgb(244, 144, 137);
 }
-
-.movingContainer {
-  transition-timing-function: linear;
-}

@@ -134,6 +134,8 @@ export default class SlideV {
       currentSlideIndex: this._position,
       numberSlidesAfterFrame: this._numberSlidesAfterFrame,
       lastSlideIndex: this._numberOfSlides - 1,
+      // оставленно для совместимости со старыми версиями
+      curentSlideIndex: this._position,
     };
   }
 

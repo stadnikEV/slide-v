@@ -11,6 +11,7 @@ import insertTest from './tests/insert.test';
 import removeTest from './tests/remove.test';
 import desroyTest from './tests/destroy.test';
 import bufferTest from './tests/buffer.test';
+import loopTest from './tests/loop.test';
 
 
 require('./style.css');
@@ -30,6 +31,7 @@ window.describe('SlideV', () => {
   removeTest();
   desroyTest();
   bufferTest();
+  loopTest();
 });
 
 window.mocha.run();
