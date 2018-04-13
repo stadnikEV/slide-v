@@ -1,6 +1,6 @@
 {
   "name": "slide-v",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "Slide-V is classic carousel, provides basic functionality to easy using and opportunity adding new features through API. In the carousel implemented API buffer, drag & drop, adaptive structure. Not used frameworks, dependencies and external styles.",
   "main": "./dist/slide-v.min.js",
   "scripts": {

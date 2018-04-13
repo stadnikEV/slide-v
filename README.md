@@ -64,6 +64,7 @@ Slide-V  use your DOM structure:
 	    transitionTiming: 'ease',
 	    draggable: true,
 	    dragThreshold: 0.2,
+	    loop: false,
 	    slideElemClass: 'class-name',
 	    onMoveEnd: () => {},
 	    onSlideClick: (slideElem) => {},
@@ -77,6 +78,7 @@ Slide-V  use your DOM structure:
 |**transitionTiming**|**string**<br>('ease')|The transition-timing-function property specifies<br> the speed curve of the transition effect. [example](https://codepen.io/StadnikEV/pen/NYeyxZ)
 |**draggable**|**boolean**<br>*(true)*|Enable or disable "Drag'n'Drop". [example](https://codepen.io/StadnikEV/pen/pLWaML)
 |**dragThreshold**|**number**<br>*(0.2)*|The shift value at which the step is activated.<br>Available values from 0 to 1. [example](https://codepen.io/StadnikEV/pen/Kooybm)
+|**loop**|**boolean**<br>*(false)*|Enable or disable infinite loop. [example](https://codepen.io/StadnikEV/pen/JLVOrp)
 |**slideElemClass**|**string**|Adding class to slide elements on the initialization<br>stage. This class will be add to slide elements which<br> was added to carousel through API.  [example](https://codepen.io/StadnikEV/pen/QmjLmr)
 |**onMoveEnd**|**function**|Event handler of ending moving. [example](https://codepen.io/StadnikEV/pen/pLjoeM)
 |**onSlideClick**|**function**|Event handler of mouse click on slide element.<br>This slide element passing to parameters of function.<br> [example](https://codepen.io/StadnikEV/pen/qoOBMP)
