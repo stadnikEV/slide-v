@@ -81,7 +81,7 @@ Slide-V  use your DOM structure:
 |**loop**|**boolean**<br>*(false)*|Enable or disable infinite loop. [example](https://codepen.io/StadnikEV/pen/JLVOrp)
 |**slideElemClass**|**string**|Adding class to slide elements on the initialization<br>stage. This class will be add to slide elements which<br> was added to carousel through API.  [example](https://codepen.io/StadnikEV/pen/QmjLmr)
 |**onMoveEnd**|**function**|Event handler of ending moving. [example](https://codepen.io/StadnikEV/pen/pLjoeM)
-|**onSlideClick**|**function**|Event handler of mouse click on slide element & target element.<br>This slide element passing to parameters of function.<br> [example](https://codepen.io/StadnikEV/pen/qoOBMP)
+|**onSlideClick**|**function**|Event handler of mouse click on slide.<br>Slide & target elements passing to parameters of function.<br> [example](https://codepen.io/StadnikEV/pen/qoOBMP)
 
 
 <br>
