@@ -29,17 +29,19 @@ const mySlideV = new SlideV({
   step: 2,
   transitionDuration: 300,
   transitionTiming: 'linear',
-  draggable: true,
+  // draggable: false,
   dragThreshold: 0.2,
-  loop: true,
+  // loop: true,
   slideElemClass: 'slide',
   onMoveEnd: () => {
     console.log('onMoveEnd');
   },
-  onSlideClick: (slideElem) => {
-    console.log(slideElem);
+  onSlideClick: ({ slide, target }) => {
+    console.log(slide, target);
   },
 });
+
+// mySlideV.next().destroy();
 
 
 next.addEventListener('click', () => {

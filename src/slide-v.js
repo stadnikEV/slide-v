@@ -23,6 +23,7 @@ export default class SlideV {
 
     // оборачиваем обработчики событий и сохраняем в пременные
     [
+      '_onClick',
       '_onTransitionEnd',
       '_onResize',
       '_onTouchStart',
@@ -134,8 +135,6 @@ export default class SlideV {
       currentSlideIndex: this._position,
       numberSlidesAfterFrame: this._numberSlidesAfterFrame,
       lastSlideIndex: this._numberOfSlides - 1,
-      // оставленно для совместимости со старыми версиями
-      curentSlideIndex: this._position,
     };
   }
 
@@ -548,17 +547,23 @@ export default class SlideV {
     this._movingElem.addEventListener('transitionend', this._onTransitionEnd);
     this._movingElem.addEventListener('webkitTransitionEnd', this._onTransitionEnd);
     this._movingElem.addEventListener('oTransitionEnd', this._onTransitionEnd);
-    this._containerElem.addEventListener('dragstart', this._onDragStart);
-    this._movingElem.addEventListener('mousedown', this._onMouseDown);
     this._movingElem.addEventListener('touchstart', this._onTouchStart);
+    this._movingElem.addEventListener('touchend', this._onTouchEnd);
+    this._movingElem.addEventListener('mousedown', this._onMouseDown);
+    document.addEventListener('mouseup', this._onMouseUp);
 
-    if (!this._config.draggable) return;
+    // if (!this._config.draggable) {
+    //   // this._containerElem.addEventListener('click', this._onClick);
+    //   return;
+    // }
+
+    this._containerElem.addEventListener('dragstart', this._onDragStart);
+
 
     this._movingElem.addEventListener('touchmove', this._onTouchMove);
-    this._movingElem.addEventListener('touchend', this._onTouchEnd);
+
     document.addEventListener('mousemove', this._onMouseMove);
     this._movingElem.addEventListener('mouseleave', this._onMouseLeave);
-    document.addEventListener('mouseup', this._onMouseUp);
   }
 
 
@@ -567,14 +572,20 @@ export default class SlideV {
     this._movingElem.removeEventListener('transitionend', this._onTransitionEnd);
     this._movingElem.removeEventListener('webkitTransitionEnd', this._onTransitionEnd);
     this._movingElem.removeEventListener('oTransitionEnd', this._onTransitionEnd);
-    this._containerElem.removeEventListener('dragstart', this._onDragStart);
-    this._movingElem.removeEventListener('mousedown', this._onMouseDown);
     this._movingElem.removeEventListener('touchstart', this._onTouchStart);
+    this._movingElem.removeEventListener('touchend', this._onTouchEnd);
+    this._movingElem.removeEventListener('mousedown', this._onMouseDown);
+    this._movingElem.removeEventListener('touchend', this._onTouchEnd);
 
-    if (!this._config.draggable) return;
+    // if (!this._config.draggable) {
+    //   // this._containerElem.removeEventListener('click', this._onClick);
+    //   return;
+    // }
+
+    this._containerElem.removeEventListener('dragstart', this._onDragStart);
 
     this._movingElem.removeEventListener('touchmove', this._onTouchMove);
-    this._movingElem.removeEventListener('touchend', this._onTouchEnd);
+
     document.removeEventListener('mousemove', this._onMouseMove);
     this._movingElem.removeEventListener('mouseleave', this._onMouseLeave);
     document.removeEventListener('mouseup', this._onMouseUp);
@@ -587,11 +598,29 @@ export default class SlideV {
   *
   */
 
+  _onClick(e) {
+    const slide = e.target.closest('.slide');
+    if (!slide) {
+      return;
+    }
+    if (!this._containerElem.contains(slide)) {
+      return;
+    }
+    if (this._isTouchDown) {
+      this._isTouchDown = false;
+      return;
+    }
+    this._config.onSlideClick({ slide, target: e.target });
+  }
+
 
   _onMouseDown(event) {
     if (this._inMovingProgress || event.which !== 1) return;
     this._isMouseDown = true;
+    this._dragShiftX = 0;
+    this._dragShiftY = 0;
     this._clickX = event.clientX;
+    this._clickY = event.clientY;
     this._startDragPos = parseFloat(this._movingElem.style.left);
     if (this._config.draggable) {
       this._movingElem.style.cursor = '-webkit-grabbing';
@@ -602,22 +631,33 @@ export default class SlideV {
 
   _onTouchStart(event) {
     // отменяет mousedown(через 300мс) для события touchstart
-    event.preventDefault(); // проверить не применится ли это при всплытии!!!!!!!!!!
+    // event.preventDefault();
+    this._dragShiftX = 0;
+    this._dragShiftY = 0;
     if (this._inMovingProgress) return;
     this._isTouchDown = true;
     this._touchX = event.changedTouches[0].pageX;
+    this._touchY = event.changedTouches[0].pageY;
     this._startDragPos = parseFloat(this._movingElem.style.left);
   }
 
   _onMouseMove(event) {
     if (!this._isMouseDown) return;
-    this._dragShift = this._clickX - event.clientX;
+    this._dragShiftX = this._clickX - event.clientX;
+    this._dragShiftY = this._clickY - event.clientY;
+    if (!this._config.draggable) {
+      return;
+    }
     this._dragMove();
   }
 
   _onTouchMove(event) {
     if (!this._isTouchDown) return;
-    this._dragShift = this._touchX - event.changedTouches[0].pageX;
+    this._dragShiftX = this._touchX - event.changedTouches[0].pageX;
+    this._dragShiftY = this._touchY - event.changedTouches[0].pageY;
+    if (!this._config.draggable) {
+      return;
+    }
     this._dragMove();
   }
 
@@ -625,7 +665,7 @@ export default class SlideV {
   _dragMove() {
     this._inMovingProgress = true;
 
-    const dragdDirection = Math.sign(this._dragShift);
+    const dragdDirection = Math.sign(this._dragShiftX);
 
     // не пересчитывать this._currentStep и this._nextPositionLeft для каждого события
     if (this._dragdDirection !== dragdDirection) {
@@ -641,17 +681,17 @@ export default class SlideV {
 
     // перемещение для начального положения
     if (this._position === 0 && dragdDirection === -1) {
-      this._movingElem.style.left = `${this._startDragPos - (this._dragShift * 0.1)}px`;
+      this._movingElem.style.left = `${this._startDragPos - (this._dragShiftX * 0.1)}px`;
       return;
     }
     // перемещение для конечного положения
     if (this._numberSlidesAfterFrame === 0 && dragdDirection === 1) {
-      this._movingElem.style.left = `${this._startDragPos - (this._dragShift * 0.1)}px`;
+      this._movingElem.style.left = `${this._startDragPos - (this._dragShiftX * 0.1)}px`;
       return;
     }
     // перемещение между начальным и конечным положениями
     const dragShiftCoefficient = Math.abs(this._currentStep / this._config.slidesInFrame);
-    this._movingElem.style.left = `${this._startDragPos - (this._dragShift * dragShiftCoefficient)}px`;
+    this._movingElem.style.left = `${this._startDragPos - (this._dragShiftX * dragShiftCoefficient)}px`;
 
     // ограничение перемещения если слайд находится в ожидаемом положении
     if (parseFloat(this._movingElem.style.left) < this._nextPositionLeft && dragdDirection === 1) {
@@ -675,7 +715,9 @@ export default class SlideV {
 
   _onTouchEnd(event) {
     if (!this._isTouchDown) return;
-    this._isTouchDown = false;
+    // if (!this._config.draggable) {
+    //   this._isTouchDown = false;
+    // }
     this._dragEnd(event.target);
   }
 
@@ -685,20 +727,28 @@ export default class SlideV {
     if (this._config.draggable) {
       this._setCursorGrab();
     }
+    if (this._isTouchDown) {
+      this._isTouchDown = false;
+      return;
+    }
+
     this._dragEnd(event.target);
   }
 
-  // определение клика и перетаскивания. Запуск соответствующих метолов
+  // определение клика и перетаскивания. Запуск соответствующих методов
   _dragEnd(clickedElem) {
     this._dragdDirection = null;
     this._inMovingProgress = false;
     // если небыло сдвига или сдвиг меньше 3px - то это клик
-    if (!this._dragShift || Math.abs(this._dragShift) < 3) {
+    if (Math.abs(this._dragShiftX) < 10 && Math.abs(this._dragShiftY) < 10) {
       const elem = clickedElem.closest('[data-slide-v-elem="slide-elem"]');
-      if (elem) this._config.onSlideClick(elem);
+      if (elem) this._config.onSlideClick({ slide: elem, target: clickedElem });
     }
     // если был сдвиг
-    if (this._dragShift > 0 || this._dragShift < 0) {
+    if (!this._config.draggable) {
+      return;
+    }
+    if (this._dragShiftX > 0 || this._dragShiftX < 0) {
       this._dropMoving();
     }
   }
@@ -710,7 +760,7 @@ export default class SlideV {
     // получить метод движения для завершения drag&drop
     const dropMethod = this._getDropMethod();
     dropMethod.call(this);
-    this._dragShift = 0;
+    this._dragShiftX = 0;
 
     // ускорение премещения при перетаскивании в зависимости от положения movingElem
     if (dropMethod === this.next || dropMethod === this.prev) {
@@ -727,13 +777,13 @@ export default class SlideV {
   // получение метода для бросания
   _getDropMethod() {
     const containerWidth = this._containerElem.clientWidth;
-    // -2 нужно что бы работал коефициент dragThreshold = 1
-    const Threshold = (containerWidth * this._config.dragThreshold) - 2;
+    // -2 нужно что бы работал коефициент dragthreshold = 1
+    const threshold = (containerWidth * this._config.dragThreshold) - 2;
 
-    if (this._dragShift > Threshold && this._numberSlidesAfterFrame !== 0) {
+    if (this._dragShiftX > threshold && this._numberSlidesAfterFrame !== 0) {
       return this.next;
     }
-    if (this._dragShift < -Threshold && this._position !== 0) {
+    if (this._dragShiftX < -threshold && this._position !== 0) {
       return this.prev;
     }
     return this._cancelDrag;
